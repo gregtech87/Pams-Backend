@@ -1,9 +1,14 @@
 package com.example.pamsbackend.controller;
 
+import com.example.pamsbackend.dao.UserRepository;
 import com.example.pamsbackend.entity.User;
-import com.example.pamsbackend.service.UserService;
 //import jakarta.annotation.security.RolesAllowed;
+import com.example.pamsbackend.service.UserService;
+import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,7 +23,18 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
-//    @RolesAllowed({ "ROLE_ADMIN", "ROLE_USER" })
+
+    @RolesAllowed("ROLE_ADMIN")
+    @GetMapping("/admin")
+    public String admin() {
+        return "Hello Admin!";
+    }
+
+    @RolesAllowed({ "ROLE_ADMIN", "ROLE_USER" })
+    @GetMapping("/user")
+    public String user() {
+        return "Hello User!";
+    }
     @GetMapping("/users")
     public List<User> getAllUsers() {
         return userService.getAllUsers();

@@ -1,119 +1,117 @@
 package com.example.pamsbackend.entity;
 
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import org.springframework.data.annotation.Id;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
-//import org.springframework.security.core.GrantedAuthority;
-//import org.springframework.security.core.userdetails.UserDetails;
-//import org.springframework.security.core.GrantedAuthority;
-//import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.data.mongodb.core.mapping.MongoId;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Document(collection = "users")
-//public class User implements UserDetails {
-public class User  {
+public class User implements UserDetails {
 
-    @Id
-    private String customerId;
+    private @MongoId ObjectId customerId;
     private String username;
     private String password;
-    private String authority;
-    private byte active;
+    private boolean enabled;
+    private Set<UserRole> userRoles;
     private String firstName;
     private String lastName;
     private String email;
     private String phone;
     private String dateOfBirth;
-
+    Set<GrantedAuthority> grantedAuthorities;
     private Address address;
 
 
     public User() {
     }
 
-    public User(String userName, String password, String authority) {
-        this.username = userName;
+    public User(String username, String password, Set<GrantedAuthority> grantedAuthorities) {
+        this.username = username;
         this.password = password;
-        this.authority = authority;
+        this.grantedAuthorities = grantedAuthorities;
     }
 
-
-
-    public String getCustomerId() {
+    public ObjectId getId() {
         return customerId;
     }
 
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
+    @Override
+    public String getPassword() {
+        return password;
     }
 
-    public String getUserName() {
-        return username;
+    public Set<GrantedAuthority> getGrantedAuthorities() {
+        return grantedAuthorities;
     }
 
-    public void setUserName(String userName) {
-        this.username = userName;
+    public void setGrantedAuthorities(Set<GrantedAuthority> grantedAuthorities) {
+        this.grantedAuthorities = grantedAuthorities;
     }
-
 
     public void setPassword(String password) {
         this.password = password;
     }
 
-    public String getAuthority() {
-        return authority;
+    public void setUserRoles(Set<UserRole> userRoles) {
+        this.userRoles = userRoles;
     }
 
-    public void setAuthority(String authority) {
-        this.authority = authority;
-    }
-//
-//    @Override
-//    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return null;
-//    }
-//
-//    public String getPassword() {
-//        return password;
-//    }
-//
-//    @Override
-//    public String getUsername() {
-//        return null;
-//    }
-//
-//    @Override
-//    public boolean isAccountNonExpired() {
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean isAccountNonLocked() {
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean isCredentialsNonExpired() {
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean isEnabled() {
-//        return false;
-//    }
-
-//    public boolean isActive() {
-//        return active;
-//    }
-
-    public void setActive(byte active) {
-        this.active = active;
+    @Override
+    public Set<UserRole> getAuthorities() {
+        return this.userRoles;
     }
 
-    public User(byte active) {
-        this.active = active;
+    @Override
+    public String getUsername() {
+        return this.username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.enabled;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        User user = (User) o;
+        return Objects.equals(username, user.username);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username);
+    }
+
+    public Set<UserRole> getUserRoles() {
+        return userRoles;
     }
 
     public String getFirstName() {
@@ -164,14 +162,17 @@ public class User  {
         this.address = address;
     }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "customerId='" + customerId + '\'' +
-                ", userName='" + username + '\'' +
+                ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
-                ", authority='" + authority + '\'' +
-                ", active=" + active +
+                ", userRoles=" + userRoles +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
