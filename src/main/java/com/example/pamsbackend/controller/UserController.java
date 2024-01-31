@@ -25,27 +25,17 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RolesAllowed({ "ROLE_ADMIN", "ROLE_USER" })
+
             @GetMapping("/username")
     public String currentUserName(Authentication authentication) {
             System.out.println(authentication.getAuthorities());
         return authentication.getAuthorities().toString();
     }
-    @RolesAllowed("ROLE_ADMIN")
-    @GetMapping("/admin")
-    public String admin() {
-        return "Hello Admin!";
-    }
 
-    @RolesAllowed({ "ROLE_ADMIN", "ROLE_USER" })
-    @GetMapping("/user")
-    public String user() {
-        return "Hello User!";
-    }
-
-    @RolesAllowed({ "ROLE_ADMIN", "ROLE_USER" })
+//    @RolesAllowed({ "ROLE_ADMIN", "ROLE_USER" })
     @GetMapping("/users")
     public List<User> getAllUsers() {
+        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         return userService.getAllUsers();
     }
 

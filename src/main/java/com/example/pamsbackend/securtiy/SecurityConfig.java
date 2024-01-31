@@ -27,6 +27,16 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @ComponentScan("com.example.pamsbackend.securtiy")
 public class SecurityConfig  {
 
+    @Autowired
+    CustomUserDetailsService userDetailsService;
+
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+
+        System.out.println(auth);
+        auth.userDetailsService(userDetailsService);
+    }
+
 
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -39,32 +49,14 @@ public class SecurityConfig  {
     }
 
     @Bean
-    public UserDetailsService mongoUserDetails() {
-        return new CustomUserDetailsService();
-    }
-
-
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        UserDetailsService userDetailsService = mongoUserDetails();
-        auth
-                .userDetailsService(userDetailsService)
-                .passwordEncoder(bCryptPasswordEncoder);
-
-    }
-
-
-    @Bean
-    MvcRequestMatcher.Builder mvc(HandlerMappingIntrospector introspector) {
-        return new MvcRequestMatcher.Builder(introspector);
-    }
-    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        System.out.println("hej");
         http  .authorizeHttpRequests(configurer ->
                         configurer
 
-                                .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/v1/users").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/v1/username").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/v1/users").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/api/v1/username").hasAnyRole( "USER")
+                                .requestMatchers(HttpMethod.GET, "/api/v1/username").hasAnyRole( "USER")
 
                 );
         http.csrf(AbstractHttpConfigurer::disable);
@@ -73,56 +65,5 @@ public class SecurityConfig  {
             .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();
     }
-
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:8585", "http://127.0.0.1:8585", "http://127.0.0.1:5500")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*")
-                        .exposedHeaders("Authorization")
-                        .allowCredentials(true)
-                ;
-            }
-        };
-    }
-
-
-//
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http, MvcRequestMatcher.Builder mvc) throws Exception {
-//        http.authorizeHttpRequests(configurer ->
-//                configurer
-//
-//                        .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
-//                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/username")).hasAnyRole("USER", "ADMIN")
-//                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/trips")).hasAnyRole("USER", "ADMIN")
-//                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/trips/{id}")).hasRole("USER")
-//                        .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/trips")).hasRole("USER")
-//                        .requestMatchers(mvc.pattern(HttpMethod.PUT, "/api/v1/trips/{id}")).hasRole("USER")
-//                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/users")).hasAnyRole("USER", "ADMIN")
-//                        .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/customers")).hasRole("ADMIN")
-//                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/customers/{id}")).hasAnyRole("USER", "ADMIN")
-//                        .requestMatchers(mvc.pattern(HttpMethod.DELETE, "/api/v1/customers/{id}")).hasRole("ADMIN")
-//                        .requestMatchers(mvc.pattern(HttpMethod.DELETE, "/api/v1/trips/{id}")).hasRole("ADMIN")
-//                        .requestMatchers(mvc.pattern(HttpMethod.PUT, "/api/v1/customers/{id}")).hasAnyRole("USER", "ADMIN")
-//                        .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/destination")).hasRole("ADMIN")
-//                        .requestMatchers(mvc.pattern(HttpMethod.DELETE, "/api/v1/destination/{id}")).hasRole("ADMIN")
-//                        .requestMatchers(mvc.pattern(HttpMethod.PUT, "/api/v1/destination/{id}")).hasRole("ADMIN")
-//                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/destination/{id}")).hasAnyRole("USER", "ADMIN")
-//                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/alltrips")).hasRole("ADMIN")
-//                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/currency/{total}/{currancy}")).hasAnyRole("USER", "ADMIN")
-//        );
-//        http.httpBasic(Customizer.withDefaults());
-//        http.cors(Customizer.withDefaults());
-//        http.csrf(csrf -> csrf
-//                .ignoringRequestMatchers(mvc.pattern("/h2-console/**"))
-//                .disable());
-//        http.headers().frameOptions().sameOrigin();
-//        return http.build();
-//    }
 
 }

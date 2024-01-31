@@ -34,47 +34,42 @@ public class CustomUserDetailsService implements UserDetailsService {
     private RoleRepository roleRepository;
 
     @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    public User findUserByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-
-    public void saveUser(User user) {
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        user.setEnabled(true);
-        Role userRole = roleRepository.findByRole("ROLE_ADMIN");
-        user.setRoles(new HashSet<>(Arrays.asList(userRole)));
-        userRepository.save(user);
-    }
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-
-        User user = userRepository.findByEmail(email);
-        if (user != null) {
-            System.out.println(user);
-            List<GrantedAuthority> authorities = getUserAuthority(user.getRoles());
-            return buildUserForAuthentication(user, authorities);
-        } else {
-            throw new UsernameNotFoundException("username not found");
-        }
-    }
-
-    private List<GrantedAuthority> getUserAuthority(Set<Role> userRoles) {
-        Set<GrantedAuthority> roles = new HashSet<>();
-        userRoles.forEach((role) -> {
-            roles.add(new SimpleGrantedAuthority(role.getRole()));
-        });
-        System.out.println(roles);
-        List<GrantedAuthority> grantedAuthorities = new ArrayList<>(roles);
-        System.out.println(grantedAuthorities);
-        return grantedAuthorities;
-    }
-
-    private UserDetails buildUserForAuthentication(User user, List<GrantedAuthority> authorities) {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        System.out.println(username);
+        User user = userRepository.findByUsername(username);
         System.out.println(user);
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), authorities);
-    }
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with username: " + username);
+        }
 
+        // Load user roles from the database
+        Set<Role> roles = user.getRoles();
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        System.out.println(user);
+        System.out.println(roles.toString());
+        for (Role role : roles) {
+            authorities.add(new SimpleGrantedAuthority(role.getRole()));
+        }
+
+        // Use BCryptPasswordEncoder to handle password encoding and matching
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        System.out.println();
+        System.out.println(username);
+        System.out.println(roles.toString());
+        System.out.println(encodedPassword);
+        System.out.println(authorities);
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        return new org.springframework.security.core.userdetails.User(
+                user.getUsername(),
+                encodedPassword,
+                authorities
+        );
+    }
 }
