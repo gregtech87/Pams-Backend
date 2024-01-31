@@ -8,6 +8,7 @@ import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,12 @@ public class UserController {
         this.userService = userService;
     }
 
+    @RolesAllowed({ "ROLE_ADMIN", "ROLE_USER" })
+            @GetMapping("/username")
+    public String currentUserName(Authentication authentication) {
+            System.out.println(authentication.getAuthorities());
+        return authentication.getAuthorities().toString();
+    }
     @RolesAllowed("ROLE_ADMIN")
     @GetMapping("/admin")
     public String admin() {
@@ -35,6 +42,8 @@ public class UserController {
     public String user() {
         return "Hello User!";
     }
+
+    @RolesAllowed({ "ROLE_ADMIN", "ROLE_USER" })
     @GetMapping("/users")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
