@@ -1,13 +1,9 @@
-package com.example.pamsbackend.service;
+package com.example.pamsbackend.securtiy;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import com.example.pamsbackend.dao.RoleRepository;
 import com.example.pamsbackend.dao.UserRepository;
 import com.example.pamsbackend.entity.Role;
 import com.example.pamsbackend.entity.User;
@@ -26,8 +22,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private RoleRepository roleRepository;
+//    @Autowired
+//    private RoleRepository roleRepository;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;

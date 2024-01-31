@@ -29,7 +29,7 @@ public class User {
     private String dateOfBirth;
     private Address address;
 
-    @DBRef
+//    @DBRef
     private Set<Role> roles;
     List<SimpleGrantedAuthority> forcedAuthVariable;
 

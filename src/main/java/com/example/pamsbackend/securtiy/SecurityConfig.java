@@ -1,6 +1,5 @@
 package com.example.pamsbackend.securtiy;
 
-import com.example.pamsbackend.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,7 +40,9 @@ public class SecurityConfig {
                 configurer
 
                         .requestMatchers(HttpMethod.GET, "/api/v1/users").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/username").hasAnyRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/users/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/v1/username").hasAnyRole("USER")
         );
         http.csrf(AbstractHttpConfigurer::disable);
