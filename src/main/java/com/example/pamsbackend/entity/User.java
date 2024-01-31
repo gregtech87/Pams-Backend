@@ -2,6 +2,7 @@ package com.example.pamsbackend.entity;
 
 import java.util.List;
 import java.util.Set;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -20,55 +21,26 @@ public class User {
     private String id;
     @Indexed(unique = true, direction = IndexDirection.DESCENDING)
     private String email;
-    private String password;
     private String username;
-    private String fullname;
-    private String authority;
-    private boolean enabled;
+    private String password;
+    private String firstName;
+    private String lastName;
+    private String phone;
+    private String dateOfBirth;
+    private Address address;
+
     @DBRef
     private Set<Role> roles;
-    List<SimpleGrantedAuthority> dummyAuthorityForExample;
+    List<SimpleGrantedAuthority> forcedAuthVariable;
 
-    public User(String password, String username, List<SimpleGrantedAuthority> dummyAuthorityForExample) {
+    public User(String password, String username, List<SimpleGrantedAuthority> forcedAuthVariable) {
         this.password = password;
         this.username = username;
-        this.dummyAuthorityForExample = dummyAuthorityForExample;
+        this.forcedAuthVariable = forcedAuthVariable;
     }
 
     public String getId() {
         return id;
-    }
-
-    public String getUserName() {
-        return username;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public List<SimpleGrantedAuthority> getDummyAuthorityForExample() {
-        return dummyAuthorityForExample;
-    }
-
-    public void setDummyAuthorityForExample(List<SimpleGrantedAuthority> dummyAuthorityForExample) {
-        this.dummyAuthorityForExample = dummyAuthorityForExample;
-    }
-
-    public void setUserName(String userName) {
-        this.username = userName;
-    }
-
-    public String getAuthority() {
-        return authority;
-    }
-
-    public void setAuthority(String authority) {
-        this.authority = authority;
     }
 
     public void setId(String id) {
@@ -83,6 +55,14 @@ public class User {
         this.email = email;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -91,20 +71,44 @@ public class User {
         this.password = password;
     }
 
-    public String getFullname() {
-        return fullname;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     public Set<Role> getRoles() {
@@ -115,18 +119,28 @@ public class User {
         this.roles = roles;
     }
 
+    public List<SimpleGrantedAuthority> getForcedAuthVariable() {
+        return forcedAuthVariable;
+    }
+
+    public void setForcedAuthVariable(List<SimpleGrantedAuthority> forcedAuthVariable) {
+        this.forcedAuthVariable = forcedAuthVariable;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "id='" + id + '\'' +
                 ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
                 ", username='" + username + '\'' +
-                ", fullname='" + fullname + '\'' +
-                ", authority='" + authority + '\'' +
-                ", enabled=" + enabled +
+                ", password='" + password + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", phone='" + phone + '\'' +
+                ", dateOfBirth='" + dateOfBirth + '\'' +
+                ", address=" + address +
                 ", roles=" + roles +
-                ", dummyAuthorityForExample=" + dummyAuthorityForExample +
+                ", dummyAuthorityForExample=" + forcedAuthVariable +
                 '}';
     }
 }

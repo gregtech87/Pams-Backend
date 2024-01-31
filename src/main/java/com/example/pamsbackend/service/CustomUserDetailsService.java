@@ -20,10 +20,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-/**
- *
- * @author didin
- */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
@@ -39,8 +35,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         System.out.println(username);
+        // ********** EV koll om det är användarnamn eller mail *************
         User user = userRepository.findByUsername(username);
-        System.out.println(user);
         if (user == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
@@ -48,24 +44,14 @@ public class CustomUserDetailsService implements UserDetailsService {
         // Load user roles from the database
         Set<Role> roles = user.getRoles();
         List<GrantedAuthority> authorities = new ArrayList<>();
-        System.out.println(user);
-        System.out.println(roles.toString());
+        System.out.println("CustomUserDetailsService line 47: " + user);
+        System.out.println("CustomUserDetailsService line 48: " + roles.toString());
         for (Role role : roles) {
             authorities.add(new SimpleGrantedAuthority(role.getRole()));
         }
 
         // Use BCryptPasswordEncoder to handle password encoding and matching
         String encodedPassword = passwordEncoder.encode(user.getPassword());
-        System.out.println();
-        System.out.println(username);
-        System.out.println(roles.toString());
-        System.out.println(encodedPassword);
-        System.out.println(authorities);
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println();
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 encodedPassword,

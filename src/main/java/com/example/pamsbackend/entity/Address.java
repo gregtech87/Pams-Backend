@@ -1,14 +1,6 @@
 package com.example.pamsbackend.entity;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-@Document(collection = "addresses")
 public class Address {
-
-//    @Id
-//    private String addressId; // MongoDB uses a String for the ID by default
-
 
     private String street;
 
@@ -19,13 +11,11 @@ public class Address {
     public Address() {
     }
 
-//    public String getAddressId() {
-//        return addressId;
-//    }
-
-//    public void setAddressId(String addressId) {
-//        this.addressId = addressId;
-//    }
+    public Address(String street, int postalCode, String city) {
+        this.street = street;
+        this.postalCode = postalCode;
+        this.city = city;
+    }
 
     public String getStreet() {
         return street;
@@ -54,7 +44,6 @@ public class Address {
     @Override
     public String toString() {
         return "Address{" +
-//                "addressId='" + addressId + '\'' +
                 ", street='" + street + '\'' +
                 ", postalCode=" + postalCode +
                 ", city='" + city + '\'' +

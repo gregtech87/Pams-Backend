@@ -20,7 +20,6 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
-        System.out.println(userRepository.findAll());
         return userRepository.findAll();
     }
 
