@@ -33,6 +33,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         System.out.println(username);
         // ********** EV koll om det är användarnamn eller mail *************
         User user = userRepository.findByUsername(username);
+        System.out.println(user);
         if (user == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
@@ -45,7 +46,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         for (Role role : roles) {
             authorities.add(new SimpleGrantedAuthority(role.getRole()));
         }
-
         // Use BCryptPasswordEncoder to handle password encoding and matching
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         return new org.springframework.security.core.userdetails.User(
