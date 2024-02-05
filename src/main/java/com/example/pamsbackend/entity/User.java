@@ -1,8 +1,15 @@
 package com.example.pamsbackend.entity;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import com.example.pamsbackend.dao.BinaryDeserializer;
+import com.example.pamsbackend.dao.BinarySerializer;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -14,6 +21,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
  *
  * @author didin
  */
+//@JsonInclude(JsonInclude.Include.NON_NULL)
 @Document(collection = "users")
 public class User {
 
@@ -29,9 +37,14 @@ public class User {
     private String dateOfBirth;
     private Address address;
 
-//    @DBRef
+    @JsonSerialize(using = BinarySerializer.class)
+    @JsonDeserialize(using = BinaryDeserializer.class)
+    private Binary profilePic;
     private Set<Role> roles;
     List<SimpleGrantedAuthority> forcedAuthVariable;
+
+    public User() {
+    }
 
     public User(String password, String username, List<SimpleGrantedAuthority> forcedAuthVariable) {
         this.password = password;
@@ -127,6 +140,14 @@ public class User {
         this.forcedAuthVariable = forcedAuthVariable;
     }
 
+    public Binary getProfilePic() {
+        return profilePic;
+    }
+
+    public void setProfilePic(Binary profilePic) {
+        this.profilePic = profilePic;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -139,8 +160,9 @@ public class User {
                 ", phone='" + phone + '\'' +
                 ", dateOfBirth='" + dateOfBirth + '\'' +
                 ", address=" + address +
+                ", profilePic=" + profilePic +
                 ", roles=" + roles +
-                ", dummyAuthorityForExample=" + forcedAuthVariable +
+                ", forcedAuthVariable=" + forcedAuthVariable +
                 '}';
     }
 }
