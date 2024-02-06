@@ -67,14 +67,8 @@ public class BinaryDeserializer extends JsonDeserializer<Binary> {
         System.out.println("node: " + node);
         if (node != null && node.has("$binary")) {
             String base64Value = node.get("$binary").get("base64").asText();
-//            String base64Value = node.get("base64").asText();
-//            String base64Value = String.valueOf(node.get("$binary"));
-            System.out.println("base64: " +base64Value);
-
-//            String base2 = Arrays.toString(base64Value.getBytes());
-//            System.out.println("base2: " + Arrays.toString(base2.getBytes(StandardCharsets.UTF_8)));
+            System.out.println("base64: "+base64Value);
             byte[] decodedBytes = Base64.getDecoder().decode(base64Value);
-            System.out.println("decodeb: " + Arrays.toString(decodedBytes));
             return new Binary(decodedBytes);
         } else {
             return null;

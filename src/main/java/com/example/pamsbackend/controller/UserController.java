@@ -39,9 +39,19 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public User saveUser(@RequestBody User user) {
+    public Object saveUser(@RequestBody User user) {
         System.out.println(user);
-        return userService.saveUser(user);
+        boolean verifiedUsername = userService.verifyUser(user.getUsername());
+        boolean verifiedEmail = userService.verifyEmail(user.getEmail());
+
+        if(verifiedUsername && verifiedEmail){
+            userService.saveUser(user);
+            return "{\"answer\":\"User registered successfully\", \"verified\":true, " +
+                    "\"verifiedUsername\":true, \"verifiedEmail\":true}";
+        }else {
+            return "{\"answer\":\"User not registered\", \"verified\":false, " +
+                    "\"verifiedUsername\":"+verifiedUsername+", \"verifiedEmail\":" + verifiedEmail + "}";
+        }
     }
 
     @DeleteMapping("/users/{id}")

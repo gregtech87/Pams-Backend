@@ -27,8 +27,9 @@ public class User {
 
     @Id
     private String id;
-    @Indexed(unique = true, direction = IndexDirection.DESCENDING)
+//    @Indexed(unique = true, direction = IndexDirection.DESCENDING)
     private String email;
+    //    @Indexed(unique = true, direction = IndexDirection.DESCENDING)
     private String username;
     private String password;
     private String firstName;
