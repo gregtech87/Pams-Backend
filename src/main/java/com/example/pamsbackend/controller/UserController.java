@@ -40,7 +40,8 @@ public class UserController {
 
     @PostMapping("/users")
     public Object saveUser(@RequestBody User user) {
-        System.out.println(user);
+        /* flytta skiten, lägg till find user by username() */
+        System.out.println("****** NEW USER***: "+user);
         boolean verifiedUsername = userService.verifyUser(user.getUsername());
         boolean verifiedEmail = userService.verifyEmail(user.getEmail());
 

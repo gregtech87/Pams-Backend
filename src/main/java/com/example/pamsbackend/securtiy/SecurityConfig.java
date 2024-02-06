@@ -60,7 +60,7 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.GET, "/api/v1/users").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/v1/users/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/users").hasAnyRole("USER", "ADMIN", "NEWUSER")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users").hasAnyRole("ADMIN", "NEWUSER")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/users/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/v1/username").hasAnyRole("USER")
         );
