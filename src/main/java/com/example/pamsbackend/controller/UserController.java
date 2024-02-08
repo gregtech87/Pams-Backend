@@ -40,19 +40,20 @@ public class UserController {
 
     @PostMapping("/users")
     public Object saveUser(@RequestBody User user) {
-        /* flytta skiten, lägg till find user by username() */
-        System.out.println("****** NEW USER***: "+user);
-        boolean verifiedUsername = userService.verifyUser(user.getUsername());
-        boolean verifiedEmail = userService.verifyEmail(user.getEmail());
-
-        if(verifiedUsername && verifiedEmail){
-            userService.saveUser(user);
-            return "{\"answer\":\"User registered successfully\", \"verified\":true, " +
-                    "\"verifiedUsername\":true, \"verifiedEmail\":true}";
-        }else {
-            return "{\"answer\":\"User not registered\", \"verified\":false, " +
-                    "\"verifiedUsername\":"+verifiedUsername+", \"verifiedEmail\":" + verifiedEmail + "}";
-        }
+//        /* flytta skiten, lägg till find user by username() */
+//        System.out.println("****** NEW USER***: "+user);
+//        boolean verifiedUsername = userService.verifyUser(user.getUsername());
+//        boolean verifiedEmail = userService.verifyEmail(user.getEmail());
+//
+//        if(verifiedUsername && verifiedEmail){
+//            userService.saveUser(user);
+//            return "{\"answer\":\"User registered successfully\", \"verified\":true, " +
+//                    "\"verifiedUsername\":true, \"verifiedEmail\":true}";
+//        }else {
+//            return "{\"answer\":\"User not registered\", \"verified\":false, " +
+//                    "\"verifiedUsername\":"+verifiedUsername+", \"verifiedEmail\":" + verifiedEmail + "}";
+//        }
+        return userService.saveUser(user);
     }
 
     @DeleteMapping("/users/{id}")

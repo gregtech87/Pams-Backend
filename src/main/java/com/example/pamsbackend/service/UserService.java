@@ -37,16 +37,30 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    public User saveUser(User user) {
+    public Object saveUser(User user) {
         user.setId(new ObjectId().toString());
+//        user.getProfilePicture().setId(new ObjectId().toString());
 
-        /* Logik för validering username och mail */
+        /* flytta skiten, lägg till find user by username() */
+        System.out.println("****** NEW USER***: "+user);
+        boolean verifiedUsername = verifyUser(user.getUsername());
+        boolean verifiedEmail = verifyEmail(user.getEmail());
 
-        for (Role role : user.getRoles()) {
-            role.setId(new ObjectId().toString());;
-            role.setRole("ROLE_USER");
-        };
-        return userRepository.save(user);
+        if(verifiedUsername && verifiedEmail){
+            for (Role role : user.getRoles()) {
+                role.setId(new ObjectId().toString());;
+                role.setRole("ROLE_USER");
+            };
+            userRepository.save(user);
+            return "{\"answer\":\"User registered successfully\", \"verified\":true, " +
+                    "\"verifiedUsername\":true, \"verifiedEmail\":true}";
+        }else {
+            return "{\"answer\":\"User not registered\", \"verified\":false, " +
+                    "\"verifiedUsername\":"+verifiedUsername+", \"verifiedEmail\":" + verifiedEmail + "}";
+        }
+
+
+//        return userRepository.save(user);
     }
 
     public void deleteUser(String id) {

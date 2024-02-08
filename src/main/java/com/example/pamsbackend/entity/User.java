@@ -1,33 +1,25 @@
 package com.example.pamsbackend.entity;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 import com.example.pamsbackend.dao.BinaryDeserializer;
 import com.example.pamsbackend.dao.BinarySerializer;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.IndexDirection;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-/**
- *
- * @author didin
- */
+
 //@JsonInclude(JsonInclude.Include.NON_NULL)
 @Document(collection = "users")
 public class User {
 
     @Id
     private String id;
-//    @Indexed(unique = true, direction = IndexDirection.DESCENDING)
+    //    @Indexed(unique = true, direction = IndexDirection.DESCENDING)
     private String email;
     //    @Indexed(unique = true, direction = IndexDirection.DESCENDING)
     private String username;
@@ -37,6 +29,7 @@ public class User {
     private String phone;
     private String dateOfBirth;
     private Address address;
+    private PictureData profilePictureData;
 
     @JsonSerialize(using = BinarySerializer.class)
     @JsonDeserialize(using = BinaryDeserializer.class)
@@ -141,10 +134,19 @@ public class User {
         this.forcedAuthVariable = forcedAuthVariable;
     }
 
+    public PictureData getProfilePictureData() {
+        return profilePictureData;
+    }
+
+    public void setProfilePictureData(PictureData profilePictureData) {
+        this.profilePictureData = profilePictureData;
+    }
+
     public Binary getProfilePic() {
         return profilePic;
     }
 
+    //
     public void setProfilePic(Binary profilePic) {
         this.profilePic = profilePic;
     }
@@ -161,6 +163,7 @@ public class User {
                 ", phone='" + phone + '\'' +
                 ", dateOfBirth='" + dateOfBirth + '\'' +
                 ", address=" + address +
+                ", profilePictureData=" + profilePictureData +
                 ", profilePic=" + profilePic +
                 ", roles=" + roles +
                 ", forcedAuthVariable=" + forcedAuthVariable +
