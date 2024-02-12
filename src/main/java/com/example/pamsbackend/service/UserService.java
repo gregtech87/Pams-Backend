@@ -90,4 +90,8 @@ public class UserService {
         }
         return verified;
     }
+
+    public User findByUsername(String username){
+        return userRepository.findByUsername(username);
+    }
 }

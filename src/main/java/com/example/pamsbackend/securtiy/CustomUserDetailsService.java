@@ -46,8 +46,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         for (Role role : roles) {
             authorities.add(new SimpleGrantedAuthority(role.getRole()));
         }
+        System.out.println(user.getPassword());
         // Use BCryptPasswordEncoder to handle password encoding and matching
         String encodedPassword = passwordEncoder.encode(user.getPassword());
+        System.out.println(encodedPassword);
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 encodedPassword,

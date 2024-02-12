@@ -19,10 +19,13 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/username")
-    public String currentUserName(Authentication authentication) {
+    @GetMapping("/login")
+    public User currentUserName(Authentication authentication) {
+        User user = userService.findByUsername(authentication.getName());
+        System.out.println(user);
+        System.out.println(authentication.toString());
         System.out.println(authentication.getAuthorities());
-        return authentication.getAuthorities().toString();
+        return user;
     }
 
     @GetMapping("/users")
