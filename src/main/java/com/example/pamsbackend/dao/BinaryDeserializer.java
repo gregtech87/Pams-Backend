@@ -68,6 +68,7 @@ public class BinaryDeserializer extends JsonDeserializer<Binary> {
 
 
 //        if (node != null && node.has("$binary")) {
+        //noinspection DataFlowIssue
         if (node.toString().length() >20  && node.has("$binary")) {
             System.out.println("node2: " + node);
             String base64Value = node.get("$binary").get("base64").asText();

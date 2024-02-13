@@ -1,11 +1,15 @@
 package com.example.pamsbackend.securtiy;
 
+import com.example.pamsbackend.securtiy.config.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -19,29 +23,33 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    CustomUserDetailsService userDetailsService;
 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService);
+    private final CustomUserDetailsService customUserDetailsService;
+
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.customUserDetailsService = customUserDetailsService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    private final PasswordEncoderConfig passwordEncoderConfig;
-
-    @Autowired
-    public SecurityConfig(PasswordEncoderConfig passwordEncoderConfig) {
-        this.passwordEncoderConfig = passwordEncoderConfig;
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
-
-//    private BCryptPasswordEncoder bCryptPasswordEncoder;
-//    private CustomizePasswordEncoder customizePasswordEncoder;
-//
-//    @Autowired
-//    public SecurityConfig(BCryptPasswordEncoder bCryptPasswordEncoder, CustomizePasswordEncoder customizePasswordEncoder) {
-//        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-//        this.customizePasswordEncoder = customizePasswordEncoder;
+//    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.userDetailsService(customUserDetailsService).passwordEncoder(bCryptPasswordEncoder);
 //    }
+
+//    @Bean
+//    public DaoAuthenticationProvider daoAuthenticationProvider(){
+//        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+//        provider.setPasswordEncoder(bCryptPasswordEncoder);
+//        provider.setUserDetailsService(customUserDetailsService);
+//        return provider;
+//    }
+
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
@@ -66,17 +74,22 @@ public class SecurityConfig {
                 configurer
 
                         .requestMatchers(HttpMethod.GET, "/index").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/users").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/users/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/users").hasAnyRole("ADMIN", "NEWUSER")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/users/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/login").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/api/v*/registration/confirm/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v*/userstatus/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v*/users").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/api/v*/users/{id}").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/api/v*/token/{id}").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, "/api/v*/registeruser").hasRole("NEWUSER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v*/users/{id}").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/api/v*/login").hasRole("USER")
         );
         http.csrf(AbstractHttpConfigurer::disable);
         http.cors(Customizer.withDefaults());
         http.httpBasic(Customizer.withDefaults())
-                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry.anyRequest().permitAll())
-                .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
+                        authorizationManagerRequestMatcherRegistry.anyRequest().permitAll())
+                .sessionManagement(httpSecuritySessionManagementConfigurer ->
+                        httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();
     }
 }

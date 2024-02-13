@@ -1,4 +1,4 @@
-package com.example.pamsbackend.securtiy;
+package com.example.pamsbackend.securtiy.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +9,6 @@ public class PasswordEncoderConfig {
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
-
         return new BCryptPasswordEncoder();
     }
 }

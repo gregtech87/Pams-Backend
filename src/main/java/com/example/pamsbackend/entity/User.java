@@ -1,5 +1,7 @@
 package com.example.pamsbackend.entity;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -10,40 +12,79 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 
-//@JsonInclude(JsonInclude.Include.NON_NULL)
 @Document(collection = "users")
-public class User {
+public class User implements UserDetails {
 
     @Id
     private String id;
-    //    @Indexed(unique = true, direction = IndexDirection.DESCENDING)
     private String email;
-    //    @Indexed(unique = true, direction = IndexDirection.DESCENDING)
-    private String username;
-    private String password;
+    @JsonSerialize(using = BinarySerializer.class)
+    @JsonDeserialize(using = BinaryDeserializer.class)
+    private Binary profilePic;
+    private PictureData profilePictureData;
     private String firstName;
     private String lastName;
     private String phone;
     private String dateOfBirth;
     private Address address;
-    private PictureData profilePictureData;
-
-    @JsonSerialize(using = BinarySerializer.class)
-    @JsonDeserialize(using = BinaryDeserializer.class)
-    private Binary profilePic;
-    private Set<Role> roles;
-    List<SimpleGrantedAuthority> forcedAuthVariable;
+    private String username;
+    private String password;
+    private String role;
+    private Boolean locked = false;
+    private Boolean enabled = false;
+    private ConfirmationToken confirmationToken;
 
     public User() {
     }
 
-    public User(String password, String username, List<SimpleGrantedAuthority> forcedAuthVariable) {
+    public User(String email, String firstName, String lastName, String password, String role) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
         this.password = password;
-        this.username = username;
-        this.forcedAuthVariable = forcedAuthVariable;
+        this.role = role;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        SimpleGrantedAuthority authority =
+                new SimpleGrantedAuthority(role);
+        return Collections.singletonList(authority);
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return !locked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 
     public String getId() {
@@ -62,20 +103,20 @@ public class User {
         this.email = email;
     }
 
-    public String getUsername() {
-        return username;
+    public Binary getProfilePic() {
+        return profilePic;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setProfilePic(Binary profilePic) {
+        this.profilePic = profilePic;
     }
 
-    public String getPassword() {
-        return password;
+    public PictureData getProfilePictureData() {
+        return profilePictureData;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setProfilePictureData(PictureData profilePictureData) {
+        this.profilePictureData = profilePictureData;
     }
 
     public String getFirstName() {
@@ -118,37 +159,44 @@ public class User {
         this.address = address;
     }
 
-    public Set<Role> getRoles() {
-        return roles;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public List<SimpleGrantedAuthority> getForcedAuthVariable() {
-        return forcedAuthVariable;
+    public String getRole() {
+        return role;
     }
 
-    public void setForcedAuthVariable(List<SimpleGrantedAuthority> forcedAuthVariable) {
-        this.forcedAuthVariable = forcedAuthVariable;
+    public void setRole(String role) {
+        this.role = role;
     }
 
-    public PictureData getProfilePictureData() {
-        return profilePictureData;
+    public Boolean getLocked() {
+        return locked;
     }
 
-    public void setProfilePictureData(PictureData profilePictureData) {
-        this.profilePictureData = profilePictureData;
+    public void setLocked(Boolean locked) {
+        this.locked = locked;
     }
 
-    public Binary getProfilePic() {
-        return profilePic;
+    public Boolean getEnabled() {
+        return enabled;
     }
 
-    //
-    public void setProfilePic(Binary profilePic) {
-        this.profilePic = profilePic;
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public ConfirmationToken getConfirmationToken() {
+        return confirmationToken;
+    }
+
+    public void setConfirmationToken(ConfirmationToken confirmationToken) {
+        this.confirmationToken = confirmationToken;
     }
 
     @Override
@@ -156,17 +204,19 @@ public class User {
         return "User{" +
                 "id='" + id + '\'' +
                 ", email='" + email + '\'' +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
+                ", profilePic=" + profilePic +
+                ", profilePictureData=" + profilePictureData +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", phone='" + phone + '\'' +
                 ", dateOfBirth='" + dateOfBirth + '\'' +
                 ", address=" + address +
-                ", profilePictureData=" + profilePictureData +
-                ", profilePic=" + profilePic +
-                ", roles=" + roles +
-                ", forcedAuthVariable=" + forcedAuthVariable +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", role='" + role + '\'' +
+                ", locked=" + locked +
+                ", enabled=" + enabled +
+                ", confirmationToken=" + confirmationToken +
                 '}';
     }
 }
