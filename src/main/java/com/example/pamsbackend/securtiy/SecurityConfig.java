@@ -16,8 +16,10 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 @Configuration
 @EnableWebSecurity
@@ -57,7 +59,7 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:8586", "http://127.0.0.1:8586", "http://127.0.0.1:5500")
+                        .allowedOrigins("http://localhost:8586", "http://127.0.0.1:8586", "http://127.0.0.1:5500", "localhost:8080", "http://127.0.0.1:8080")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .exposedHeaders("Authorization")
@@ -67,21 +69,26 @@ public class SecurityConfig {
         };
     }
 
+    @Bean
+    MvcRequestMatcher.Builder mvc(HandlerMappingIntrospector introspector) {
+        return new MvcRequestMatcher.Builder(introspector);
+    }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, MvcRequestMatcher.Builder mvc) throws Exception {
         http.authorizeHttpRequests(configurer ->
                 configurer
 
-                        .requestMatchers(HttpMethod.GET, "/index").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v*/registration/confirm/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v*/userstatus/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v*/users").hasRole("USER")
-                        .requestMatchers(HttpMethod.GET, "/api/v*/users/{id}").hasRole("USER")
-                        .requestMatchers(HttpMethod.GET, "/api/v*/token/{id}").hasRole("USER")
-                        .requestMatchers(HttpMethod.POST, "/api/v*/registeruser").hasRole("NEWUSER")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v*/users/{id}").hasRole("USER")
-                        .requestMatchers(HttpMethod.GET, "/api/v*/login").hasRole("USER")
+//                        .requestMatchers(HttpMethod.GET, "/index").permitAll()
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/hello")).permitAll()
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/registration/confirm/**")).permitAll()
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/userstatus/**")).permitAll()
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/users")).hasRole("USER")
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/users/{id}")).hasRole("USER")
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/token/{id}")).hasRole("USER")
+                        .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/registeruser")).hasRole("NEWUSER")
+                        .requestMatchers(mvc.pattern(HttpMethod.DELETE, "/api/v1/users/{id}")).hasRole("USER")
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/login")).hasRole("USER")
         );
         http.csrf(AbstractHttpConfigurer::disable);
         http.cors(Customizer.withDefaults());
