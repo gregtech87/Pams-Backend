@@ -16,7 +16,11 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
@@ -52,22 +56,59 @@ public class SecurityConfig {
 //        return provider;
 //    }
 
-
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:8586", "http://127.0.0.1:8586", "http://127.0.0.1:5500", "localhost:8080", "http://127.0.0.1:8080")
+                        .allowedOriginPatterns(
+                                "https://*.gregtech.duckdns.org/",
+                                "https://*.gregtech.duckdns.org:[*]",
+                                "https://*.gregtech.duckdns.org:[*]/",
+                                "http://*.gregtech.duckdns.org:[*]",
+                                "http://192.168.77.27:[*]",
+                                "http://localhost:8586",
+                                "localhost:8080",
+                                "http://127.0.0.1:8586",
+                                "http://127.0.0.1:5500",
+                                "http://127.0.0.1:8080"
+                        )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*")
+//                        .allowedHeaders("Accept", "Authorization", "Origin", "Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Access-Control-Allow-Methods")
+//                        .exposedHeaders("Accept", "Authorization", "Origin", "Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Access-Control-Allow-Methods")
+                        .allowedHeaders(
+                                "Content-Type",
+                                "Authorization",
+                                "X-Requested-With",
+                                "Accept",
+                                "Origin",
+                                "Access-Control-Allow-Origin",
+                                "Access-Control-Request-Method",
+                                "Access-Control-Request-Headers"
+                        )
                         .exposedHeaders("Authorization")
-                        .allowCredentials(true)
+                        .allowCredentials(true).maxAge(3600)
                 ;
             }
         };
     }
+
+//    @Bean
+//    public WebMvcConfigurer corsConfigurer() {
+//        return new WebMvcConfigurer() {
+//            @Override
+//            public void addCorsMappings(CorsRegistry registry) {
+//                registry.addMapping("/**")
+//                        .allowedOrigins("http://localhost:8586", "http://127.0.0.1:8586", "http://127.0.0.1:5500", "localhost:8080", "http://127.0.0.1:8080", "http://192.168.77.27:32750/", "https://pam-gui.gregtech.duckdns.org/")
+//                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+//                        .allowedHeaders("*")
+//                        .exposedHeaders("Authorization")
+//                        .allowCredentials(true)
+//                ;
+//            }
+//        };
+//    }
 
     @Bean
     MvcRequestMatcher.Builder mvc(HandlerMappingIntrospector introspector) {
@@ -92,6 +133,7 @@ public class SecurityConfig {
         );
         http.csrf(AbstractHttpConfigurer::disable);
         http.cors(Customizer.withDefaults());
+//        http.cors(AbstractHttpConfigurer::disable);
         http.httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                         authorizationManagerRequestMatcherRegistry.anyRequest().permitAll())
