@@ -19,6 +19,10 @@ public class UserController {
         this.userServiceimpl = userServiceimpl;
     }
 
+    @GetMapping("/hello")
+    public String sadasd(){
+        return "HEEEEEEEEEOOOOLLLLLLOOOOOOO";
+    }
     @GetMapping("/login")
     public User currentUserName(Authentication authentication) {
         User user = userServiceimpl.findByUsername(authentication.getName());
