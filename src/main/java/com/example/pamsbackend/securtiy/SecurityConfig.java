@@ -75,11 +75,12 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.GET, "/index").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v*/registration/confirm/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v*/userstatus/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v*/userstatus/**").hasRole("STATUSCHECK")
                         .requestMatchers(HttpMethod.GET, "/api/v*/users").hasRole("USER")
                         .requestMatchers(HttpMethod.GET, "/api/v*/users/{id}").hasRole("USER")
                         .requestMatchers(HttpMethod.GET, "/api/v*/token/{id}").hasRole("USER")
-                        .requestMatchers(HttpMethod.POST, "/api/v*/registeruser").hasRole("NEWUSER")
+                        .requestMatchers(HttpMethod.POST, "/api/v*/user").hasRole("NEWUSER")
+                        .requestMatchers(HttpMethod.PUT, "/api/v*/user").hasRole("EDITUSER")
                         .requestMatchers(HttpMethod.DELETE, "/api/v*/users/{id}").hasRole("USER")
                         .requestMatchers(HttpMethod.GET, "/api/v*/login").hasRole("USER")
         );

@@ -10,6 +10,7 @@ public interface UserService {
     List<User> getAllUsers();
     Optional<User> getUserById(String id);
     String signUpUser(User newUser) ;
+    String updateUser(User editedUser) ;
     void deleteUser(String id);
     User findByUsername(String username);
     String confirmToken(String token);

@@ -46,12 +46,17 @@ public class UserController {
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
     }
 
-    @PostMapping("/registeruser")
+    @PostMapping("/user")
     public Object NewUser(@RequestBody User user) {
         return userServiceimpl.signUpUser(user);
     }
 
-    @DeleteMapping("/users/{id}")
+    @PutMapping("/user")
+    public Object UpdateUser(@RequestBody User user) {
+        return userServiceimpl.updateUser(user);
+    }
+
+    @DeleteMapping("/user/{id}")
     public void deleteUser(@PathVariable String id) {
         userServiceimpl.deleteUser(id);
     }

@@ -82,6 +82,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public String updateUser(User editedUser) {
+        System.out.println(editedUser);
+        return "{\"answer\":\"User registered successfully\", \"verified\":true, " +
+                "\"verifiedUsername\":true, \"verifiedEmail\":true}";
+    }
+
+    @Override
     public void deleteUser(String id) {
         userRepository.deleteById(id);
     }
