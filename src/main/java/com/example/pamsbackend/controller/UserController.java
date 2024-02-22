@@ -42,7 +42,7 @@ public class UserController {
 //        return userServiceimpl.getToken(tokenString);
 //    }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/user/{id}")
     public User getUserById(@PathVariable String id) {
         System.out.println(id);
         System.out.println(userServiceimpl.getUserById(id));
