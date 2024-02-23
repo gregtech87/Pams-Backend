@@ -33,7 +33,8 @@ public class EmailService implements EmailSender {
         System.out.println("confirmationToken: " + confirmationToken);
         user.setConfirmationToken(confirmationToken);
 
-        String link = "https://pam-api.gregtech.duckdns.org/api/v1/registration/confirm?token=" + token;
+//        String link = "https://pam-api.gregtech.duckdns.org/api/v1/registration/confirm?token=" + token;
+        String link = "http://localhost:8586/api/v1/registration/confirm?token=" + token;
         send( user.getEmail(), buildEmail(user.getFirstName(), link));
         return user;
     }

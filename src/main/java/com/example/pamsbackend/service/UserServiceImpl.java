@@ -73,10 +73,10 @@ public class UserServiceImpl implements UserService {
 
             System.out.println("****** NEW USER2 ***: " + newUser);
             userRepository.save(newUser);
-            return "{\"answer\":\"User registered successfully\", \"verified\":true, " +
+            return "{\"answer\":\"User registered successfully!\", \"verified\":true, " +
                     "\"verifiedUsername\":true, \"verifiedEmail\":true}";
         } else {
-            return "{\"answer\":\"User not registered\", \"verified\":false, " +
+            return "{\"answer\":\"User not registered!\", \"verified\":false, " +
                     "\"verifiedUsername\":" + verifiedUsername + ", \"verifiedEmail\":" + verifiedEmail + "}";
         }
     }
@@ -84,8 +84,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String updateUser(User editedUser) {
         System.out.println(editedUser);
-        return "{\"answer\":\"User registered successfully\", \"verified\":true, " +
-                "\"verifiedUsername\":true, \"verifiedEmail\":true}";
+        return "{\"answer\":\"User updated successfully!\"}";
     }
 
     @Override
@@ -105,22 +104,22 @@ public class UserServiceImpl implements UserService {
     public String confirmToken(String token) {
         User user = userRepository.findByConfirmationTokenToken(token);
         ConfirmationToken confirmationToken = user.getConfirmationToken();
-
+        System.out.println("confirmationToken confirmation: " + confirmationToken);
         if (confirmationToken.getConfirmedAt() != null) {
             return "Account already confirmed!";
         }
 
         LocalDateTime expiredAt = confirmationToken.getExpiresAt();
 
-        if (expiredAt.isBefore(LocalDateTime.now())) {
+        if (!expiredAt.isBefore(LocalDateTime.now())) {
+            user.getConfirmationToken().setConfirmedAt(LocalDateTime.now());
+            user.setEnabled(true);
+            System.out.println(user);
+            userRepository.save(user);
+            return "Account confirmed!";
+        } else {
             return "Token expired!";
         }
-
-        user.getConfirmationToken().setConfirmedAt(LocalDateTime.now());
-        user.setEnabled(true);
-        System.out.println(user);
-        userRepository.save(user);
-        return "Account confirmed!";
     }
 
     @Override
