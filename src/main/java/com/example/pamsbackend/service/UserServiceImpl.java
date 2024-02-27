@@ -6,6 +6,8 @@ import com.example.pamsbackend.dao.UserService;
 import com.example.pamsbackend.entity.User;
 import com.example.pamsbackend.repositorys.UserRepository;
 import com.example.pamsbackend.entity.ConfirmationToken;
+import org.apache.catalina.manager.host.HostManagerServlet;
+import org.apache.catalina.startup.HostConfig;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -105,7 +107,7 @@ public class UserServiceImpl implements UserService {
     public String confirmToken(String token) {
         User user = userRepository.findByConfirmationTokenToken(token);
         ConfirmationToken confirmationToken = user.getConfirmationToken();
-        System.out.println("confirmationToken confirmation: " + confirmationToken);
+        System.out.println("confirmationToken confirmation before: " + confirmationToken);
         if (confirmationToken.getConfirmedAt() != null) {
             return "Account already confirmed!";
         }
@@ -115,8 +117,8 @@ public class UserServiceImpl implements UserService {
         if (!expiredAt.isBefore(LocalDateTime.now())) {
             user.getConfirmationToken().setConfirmedAt(LocalDateTime.now());
             user.setEnabled(true);
-            System.out.println(user);
-            userRepository.save(user);
+            System.out.println("confirmationToken confirmation after: "+user.getConfirmationToken());
+            System.out.println(userRepository.save(user));
             return "Account confirmed!";
         } else {
             return "Token expired!";

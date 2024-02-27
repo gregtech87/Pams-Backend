@@ -9,6 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -23,6 +27,26 @@ public class UserController {
     public UserController(UserServiceImpl userServiceimpl, SystemData systemData) {
         this.userServiceimpl = userServiceimpl;
         this.systemData = systemData;
+    }
+
+    @PostConstruct
+    public void loadSystemData() throws UnknownHostException {
+        System.out.println(Inet4Address.getLocalHost().getHostAddress());
+        String hostAddress = Inet4Address.getLocalHost().getHostAddress();
+
+        System.out.println(System.getProperty("spring.data.mongodb.host"));
+        systemData.load();
+        User u = userServiceimpl.findByUsername("testGuy");
+        if(u == null){
+            User user = new User("t@g.com","testGuy", "testGuy", "testGuy", "ROLE_USER");
+            user.setEnabled(true);
+            user.setUsername("testGuy");
+            userServiceimpl.signUpUser(user);
+            System.out.println(user);
+            System.out.println("testGuy created !");
+        } else {
+            System.out.println("testGuy present!");
+        }
     }
 
     @GetMapping("/hello")
@@ -73,6 +97,7 @@ public class UserController {
 
     @GetMapping("/registration/confirm")
     public String confirmUser(@RequestParam("token") String token) {
+        System.out.println("***************** CONFIRMING *****************");
         return userServiceimpl.confirmToken(token);
     }
 
@@ -81,20 +106,5 @@ public class UserController {
         return userServiceimpl.getUserStatus(credentials);
     }
 
-    @PostConstruct
-    public void loadSystemData(){
-
-        systemData.load();
-        User u = userServiceimpl.findByUsername("testGuy");
-        if(u == null){
-            User user = new User("t@g.com","testGuy", "testGuy", "testGuy", "ROLE_USER");
-            user.setEnabled(true);
-            user.setUsername("testGuy");
-            System.out.println(user);
-            System.out.println("testGuy created !");
-        } else {
-            System.out.println("testGuy present!");
-        }
-    }
 
 }
