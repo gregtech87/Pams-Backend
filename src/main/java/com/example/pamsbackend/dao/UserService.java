@@ -15,5 +15,5 @@ public interface UserService {
     User findByUsername(String username);
     String confirmToken(String token);
     String getUserStatus(String username);
-
+    boolean updateUserPassword(String idOldNewPassword);
 }

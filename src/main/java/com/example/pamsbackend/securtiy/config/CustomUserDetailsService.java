@@ -62,8 +62,8 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
 
         // Load user roles from the database
-        System.out.println("CustomUserDetailsService line 47: " + user);
-        System.out.println("CustomUserDetailsService line 48: " + user.getRole());
+        System.out.println("CustomUserDetailsService line 65: " + user);
+        System.out.println("CustomUserDetailsService line 66: " + user.getRole());
         System.out.println("incoming: " + user.getPassword());
 
         return new org.springframework.security.core.userdetails.User(

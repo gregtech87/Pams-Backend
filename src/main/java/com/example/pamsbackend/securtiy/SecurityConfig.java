@@ -93,7 +93,7 @@ public class SecurityConfig {
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/login")).hasRole("USER")
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/users")).hasRole("USER")
 //                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/token/{id}")).hasRole("USER")
-                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/user/{id}")).hasRole("USER")
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/user/{id}")).hasRole("EDITUSER")
                         .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/user")).hasRole("NEWUSER")
                         .requestMatchers(mvc.pattern(HttpMethod.PUT, "/api/v1/user")).hasRole("EDITUSER")
                         .requestMatchers(mvc.pattern(HttpMethod.DELETE, "/api/v1/user/{id}")).hasRole("USER")
