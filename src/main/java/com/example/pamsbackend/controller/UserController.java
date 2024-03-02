@@ -2,7 +2,6 @@ package com.example.pamsbackend.controller;
 
 import com.example.pamsbackend.SystemData;
 import com.example.pamsbackend.entity.Address;
-import com.example.pamsbackend.entity.SystemEntity;
 import com.example.pamsbackend.entity.User;
 import com.example.pamsbackend.service.UserServiceImpl;
 import jakarta.annotation.PostConstruct;
@@ -12,9 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.Inet4Address;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
@@ -46,7 +43,7 @@ public class UserController {
             user.setUsername("testGuy");
             byte[] decodedBytes = Base64.getDecoder().decode("noImages");
             user.setProfilePic(new Binary(decodedBytes));
-            user.setAddress(new Address("street", 4654, "city"));
+            user.setAddress(new Address("bjärme", 150, 4654, "city"));
             user.setPhone("646843135");
             user.setDateOfBirth("2154-12-05");
             userServiceimpl.signUpUser(user);
