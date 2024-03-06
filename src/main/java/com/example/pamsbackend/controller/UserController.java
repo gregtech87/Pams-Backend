@@ -2,6 +2,7 @@ package com.example.pamsbackend.controller;
 
 import com.example.pamsbackend.SystemData;
 import com.example.pamsbackend.entity.Address;
+import com.example.pamsbackend.entity.PictureData;
 import com.example.pamsbackend.entity.User;
 import com.example.pamsbackend.service.UserServiceImpl;
 import jakarta.annotation.PostConstruct;
@@ -14,6 +15,7 @@ import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -43,7 +45,8 @@ public class UserController {
             user.setUsername("testGuy");
             byte[] decodedBytes = Base64.getDecoder().decode("noImages");
             user.setProfilePic(new Binary(decodedBytes));
-            user.setAddress(new Address("bjärme", 150, 4654, "city"));
+            user.setProfilePictureData(new PictureData("name", "type", 0, 0, "LMD"));
+             user.setAddress(new Address("bjärme", 150, 4654, "city"));
             user.setPhone("646843135");
             user.setDateOfBirth("2154-12-05");
             userServiceimpl.signUpUser(user);
@@ -78,11 +81,10 @@ public class UserController {
 //    }
 
     @GetMapping("/user/{id}")
-    public User getUserById(@PathVariable String id) {
+    public Optional<User> getUserById(@PathVariable String id) {
         System.out.println(id);
         System.out.println(userServiceimpl.getUserById(id));
-        return userServiceimpl.getUserById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+        return userServiceimpl.getUserById(id);
     }
 
     @PostMapping("/user")

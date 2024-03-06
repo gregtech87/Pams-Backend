@@ -42,6 +42,12 @@ public class SystemData {
         } else {
             System.out.println("editUser present!");
         }
+        if(systemEntityService.findByUsername("noteGuy") == null){
+            SystemEntity systemEntity = new SystemEntity("noteGuy", "noteGuy", "noteGuy", "ROLE_EDITNOTE");
+            System.out.println(systemEntityService.createEntity(systemEntity));
+        } else {
+            System.out.println("noteGuy present!");
+        }
 
         setEntityList();
 

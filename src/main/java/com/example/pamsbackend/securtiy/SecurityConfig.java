@@ -23,15 +23,15 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 public class SecurityConfig {
 
 
-    private final CustomUserDetailsService customUserDetailsService;
-
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
-
-    public SecurityConfig(CustomUserDetailsService customUserDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.customUserDetailsService = customUserDetailsService;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-    }
+//    private final CustomUserDetailsService customUserDetailsService;
+//
+//    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+//
+//
+//    public SecurityConfig(CustomUserDetailsService customUserDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+//        this.customUserDetailsService = customUserDetailsService;
+//        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+//    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -90,13 +90,16 @@ public class SecurityConfig {
 
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/index")).permitAll()
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/hello")).permitAll()
+//                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/token/{id}")).hasRole("USER")
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/login")).hasRole("USER")
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/users")).hasRole("USER")
-//                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/token/{id}")).hasRole("USER")
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/user/{id}")).hasRole("EDITUSER")
                         .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/user")).hasRole("NEWUSER")
                         .requestMatchers(mvc.pattern(HttpMethod.PUT, "/api/v1/user")).hasRole("EDITUSER")
                         .requestMatchers(mvc.pattern(HttpMethod.DELETE, "/api/v1/user/{id}")).hasRole("USER")
+//                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/notes")).hasRole("EDITNOTE")
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/note/{id}")).hasRole("EDITNOTE")
+                        .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/note")).hasRole("EDITNOTE")
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v*/registration/confirm/**")).permitAll()
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/userstatus/**")).hasRole("STATUSCHECK")
         );

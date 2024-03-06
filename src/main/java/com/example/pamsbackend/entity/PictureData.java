@@ -17,6 +17,14 @@ public class PictureData {
     public PictureData() {
     }
 
+    public PictureData(String name, String type, int size, long lastModified, String lastModifiedDate) {
+        this.name = name;
+        this.type = type;
+        this.size = size;
+        this.lastModified = lastModified;
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
     public String getName() {
         return name;
     }

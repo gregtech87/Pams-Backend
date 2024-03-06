@@ -1,9 +1,6 @@
 package com.example.pamsbackend.entity;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.example.pamsbackend.dao.BinaryDeserializer;
 import com.example.pamsbackend.dao.BinarySerializer;
@@ -32,6 +29,7 @@ public class User implements UserDetails {
     private String phone;
     private String dateOfBirth;
     private Address address;
+    private List<String> notes = new ArrayList<>();
     private String username;
     private String password;
     private String role;
@@ -199,6 +197,14 @@ public class User implements UserDetails {
         this.confirmationToken = confirmationToken;
     }
 
+    public List<String> getNotes() {
+        return notes;
+    }
+
+    public void setNotes(List<String> notes) {
+        this.notes = notes;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -211,6 +217,7 @@ public class User implements UserDetails {
                 ", phone='" + phone + '\'' +
                 ", dateOfBirth='" + dateOfBirth + '\'' +
                 ", address=" + address +
+                ", notes=" + notes +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", role='" + role + '\'' +
