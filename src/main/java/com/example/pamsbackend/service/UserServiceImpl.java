@@ -237,4 +237,8 @@ public class UserServiceImpl implements UserService {
         }
         return success;
     }
+
+    public void save(User user){
+        userRepository.save(user);
+    }
 }

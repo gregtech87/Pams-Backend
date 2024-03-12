@@ -29,6 +29,9 @@ public class User implements UserDetails {
     private String phone;
     private String dateOfBirth;
     private Address address;
+    private boolean customLocation = false;
+    private float customLat;
+    private float customLong;
     private List<String> notes = new ArrayList<>();
     private String username;
     private String password;
@@ -205,6 +208,30 @@ public class User implements UserDetails {
         this.notes = notes;
     }
 
+    public boolean isCustomLocation() {
+        return customLocation;
+    }
+
+    public void setCustomLocation(boolean customLocation) {
+        this.customLocation = customLocation;
+    }
+
+    public double getCustomLat() {
+        return customLat;
+    }
+
+    public void setCustomLat(float customLat) {
+        this.customLat = customLat;
+    }
+
+    public double getCustomLong() {
+        return customLong;
+    }
+
+    public void setCustomLong(float customLong) {
+        this.customLong = customLong;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -217,6 +244,9 @@ public class User implements UserDetails {
                 ", phone='" + phone + '\'' +
                 ", dateOfBirth='" + dateOfBirth + '\'' +
                 ", address=" + address +
+                ", customLocation=" + customLocation +
+                ", customLat=" + customLat +
+                ", customLong=" + customLong +
                 ", notes=" + notes +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +

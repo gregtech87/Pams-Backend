@@ -10,6 +10,7 @@ public class Note {
     private String id;
     private String author;
     private String created;
+    private String title;
     private String note;
 
     public Note() {
@@ -52,12 +53,21 @@ public class Note {
         this.note = note;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     @Override
     public String toString() {
         return "Note{" +
                 "id='" + id + '\'' +
                 ", author='" + author + '\'' +
                 ", created='" + created + '\'' +
+                ", title='" + title + '\'' +
                 ", note='" + note + '\'' +
                 '}';
     }

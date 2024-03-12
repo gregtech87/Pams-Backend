@@ -39,7 +39,7 @@ public class NoteServiceImpl implements NoteService {
 
         newNote.setId(new ObjectId().toString());
 
-        System.out.println(newNote);
+        System.out.println("note L42"+newNote);
         Optional<User> dbUser = userRepository.findById(newNote.getAuthor());
         if (dbUser.isPresent()) {
             User user = dbUser.get();
