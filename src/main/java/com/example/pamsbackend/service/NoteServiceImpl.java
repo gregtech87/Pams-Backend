@@ -7,6 +7,9 @@ import com.example.pamsbackend.repositorys.NoteRepository;
 import com.example.pamsbackend.repositorys.UserRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,11 +20,13 @@ public class NoteServiceImpl implements NoteService {
 
     private final NoteRepository noteRepository;
     private final UserRepository userRepository;
+    private final MongoTemplate mongoTemplate;
 
     @Autowired
-    public NoteServiceImpl(NoteRepository noteRepository, UserRepository userRepository) {
+    public NoteServiceImpl(NoteRepository noteRepository, UserRepository userRepository, MongoTemplate mongoTemplate) {
         this.noteRepository = noteRepository;
         this.userRepository = userRepository;
+        this.mongoTemplate = mongoTemplate;
     }
 
     @Override
@@ -32,6 +37,12 @@ public class NoteServiceImpl implements NoteService {
     @Override
     public Optional<Note> findById(String id) {
         return noteRepository.findById(id);
+    }
+
+    @Override
+    public List<Note> findNotesByIds(List<String> noteIds) {
+        Query query = new Query(Criteria.where("_id").in(noteIds));
+        return mongoTemplate.find(query, Note.class);
     }
 
     @Override

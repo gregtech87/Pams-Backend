@@ -9,6 +9,7 @@ public interface NoteService {
 
     List<Note> getAllNotes();
     Optional<Note> findById(String id);
+    List<Note> findNotesByIds(List<String> noteIds);
     Note saveNote(Note newNote);
     Note editNote(Note note);
     void deleteNote(String id);

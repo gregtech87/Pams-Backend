@@ -2,6 +2,7 @@ package com.example.pamsbackend.entity;
 
 import java.util.*;
 
+import com.example.pamsbackend.PdfUserInfo.PdfUser;
 import com.example.pamsbackend.dao.BinaryDeserializer;
 import com.example.pamsbackend.dao.BinarySerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -39,6 +40,8 @@ public class User implements UserDetails {
     private Boolean locked = false;
     private Boolean enabled = false;
     private ConfirmationToken confirmationToken;
+    private PdfUser pdfUser;
+    private long mbOfStorage = 200;
 
     public User() {
     }
@@ -232,6 +235,22 @@ public class User implements UserDetails {
         this.customLong = customLong;
     }
 
+    public PdfUser getPdfUser() {
+        return pdfUser;
+    }
+
+    public void setPdfUser(PdfUser pdfUser) {
+        this.pdfUser = pdfUser;
+    }
+
+    public long getMbOfStorage() {
+        return mbOfStorage;
+    }
+
+    public void setMbOfStorage(long mbOfStorage) {
+        this.mbOfStorage = mbOfStorage;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -254,6 +273,8 @@ public class User implements UserDetails {
                 ", locked=" + locked +
                 ", enabled=" + enabled +
                 ", confirmationToken=" + confirmationToken +
+                ", pdfUser=" + pdfUser +
+                ", mbOfStorage=" + mbOfStorage +
                 '}';
     }
 }

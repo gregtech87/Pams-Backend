@@ -1,13 +1,17 @@
 package com.example.pamsbackend.controller;
 
-import com.example.pamsbackend.PDFtest;
+import com.example.pamsbackend.PdfUserInfo.PDFgenerator;
+import com.example.pamsbackend.PdfUserInfo.PdfUser;
 import com.example.pamsbackend.SystemData;
+import com.example.pamsbackend.dao.NoteService;
 import com.example.pamsbackend.entity.Address;
+import com.example.pamsbackend.entity.Note;
 import com.example.pamsbackend.entity.PictureData;
 import com.example.pamsbackend.entity.User;
 import com.example.pamsbackend.service.UserServiceImpl;
 import jakarta.annotation.PostConstruct;
 import net.sf.jasperreports.engine.*;
+import org.bson.types.BSONTimestamp;
 import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -15,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
 import java.net.Inet4Address;
-import java.net.UnknownHostException;
 import java.util.*;
 
 @RestController
@@ -24,14 +27,16 @@ public class UserController {
 
     private final UserServiceImpl userServiceimpl;
     private final SystemData systemData;
-    private final PDFtest pdFtest;
+    private final NoteService noteService;
+    private final PDFgenerator pdFgenerator;
 
 
     @Autowired
-    public UserController(UserServiceImpl userServiceimpl, SystemData systemData, PDFtest pdFtest) {
+    public UserController(UserServiceImpl userServiceimpl, SystemData systemData, NoteService noteService, PDFgenerator pdFgenerator) {
         this.userServiceimpl = userServiceimpl;
         this.systemData = systemData;
-        this.pdFtest = pdFtest;
+        this.noteService = noteService;
+        this.pdFgenerator = pdFgenerator;
     }
 
     @PostConstruct
@@ -52,13 +57,14 @@ public class UserController {
             user.setAddress(new Address("bjärme", 150, 4654, "city"));
             user.setPhone("646843135");
             user.setDateOfBirth("2154-12-05");
+            user.setPdfUser(new PdfUser());
             userServiceimpl.signUpUser(user);
             System.out.println(user);
             System.out.println("testGuy created !");
-            pdFtest.test(u);
+//            pdFgenerator.generateUserPDF(user);
         } else {
             System.out.println("testGuy present!");
-            pdFtest.test(u);
+//            pdFgenerator.generateUserPDF(u);
         }
 
 

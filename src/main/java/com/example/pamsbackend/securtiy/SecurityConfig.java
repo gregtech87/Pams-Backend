@@ -100,12 +100,14 @@ public class SecurityConfig {
                         .requestMatchers(mvc.pattern(HttpMethod.DELETE, "/api/v1/user/{id}")).hasRole("USER")
 
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/user/{id}")).hasRole("EDITUSER")
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/userPdf/{userId}")).hasRole("EDITUSER")
                         .requestMatchers(mvc.pattern(HttpMethod.PUT, "/api/v1/user")).hasRole("EDITUSER")
 
                         .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/user")).hasRole("NEWUSER")
 
 //                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/notes")).hasRole("EDITNOTE")
-                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/note/{id}")).hasRole("EDITNOTE")
+//                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/note/{id}")).hasRole("EDITNOTE")
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/note/{ids}")).hasRole("EDITNOTE")
                         .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/note")).hasRole("EDITNOTE")
 
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/userstatus/**")).hasRole("STATUSCHECK")

@@ -25,11 +25,18 @@ public class NoteController {
         return noteServiceImpl.getAllNotes();
     }
 
-    @GetMapping("/note/{id}")
-    public Optional<Note> getNoteById(@PathVariable String id) {
-        System.out.println(id);
-        System.out.println(noteServiceImpl.findById(id));
-        return noteServiceImpl.findById(id);
+//    @GetMapping("/note/{id}")
+//    public Optional<Note> getNoteById(@PathVariable String id) {
+//        System.out.println(id);
+//        System.out.println(noteServiceImpl.findById(id));
+//        return noteServiceImpl.findById(id);
+//    }
+
+    @GetMapping("/note/{ids}")
+    public List<Note> getNots(@PathVariable List<String> ids) {
+        System.out.println("NoteController.getNots");
+        System.out.println(ids);
+        return noteServiceImpl.findNotesByIds(ids);
     }
 
     @PostMapping("/note")
