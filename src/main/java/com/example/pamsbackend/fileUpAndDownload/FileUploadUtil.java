@@ -1,5 +1,17 @@
 package com.example.pamsbackend.fileUpAndDownload;
 
+import com.example.pamsbackend.PdfUserInfo.PDFgenerator;
+import com.example.pamsbackend.dao.UserService;
+import com.example.pamsbackend.entity.User;
+import net.sf.jasperreports.engine.JRException;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -8,22 +20,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 import java.util.Optional;
-
-import com.example.pamsbackend.PdfUserInfo.PDFgenerator;
-import com.example.pamsbackend.PdfUserInfo.PdfUser;
-import com.example.pamsbackend.dao.UserService;
-import com.example.pamsbackend.entity.User;
-import net.sf.jasperreports.engine.JRException;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class FileUploadUtil {
@@ -92,29 +88,6 @@ public class FileUploadUtil {
         }
         return fileCode;
     }
-
-    public ResponseEntity<?> outgoingFileHandler(String fileCode, String username) {
-        FileDownloadUtil downloadUtil = new FileDownloadUtil();
-        Resource resource = null;
-        try {
-            resource = downloadUtil.getFileAsResource(fileCode, username);
-        } catch (IOException e) {
-            return ResponseEntity.internalServerError().build();
-        }
-
-        if (resource == null) {
-            return new ResponseEntity<>("File not found", HttpStatus.NOT_FOUND);
-        }
-
-        String contentType = "application/octet-stream";
-        String headerValue = "attachment; filename=\"" + resource.getFilename() + "\"";
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
-                .body(resource);
-    }
-
 
     public User makeUserPdf(String userId) throws JRException, IOException {
         Optional<User> dbUser = userService.getUserById(userId);

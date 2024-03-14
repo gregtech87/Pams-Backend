@@ -1,8 +1,7 @@
 package com.example.pamsbackend.controller;
 
-import com.example.pamsbackend.dao.UserService;
-
 import com.example.pamsbackend.entity.User;
+import com.example.pamsbackend.fileUpAndDownload.FileDownloadUtil;
 import com.example.pamsbackend.fileUpAndDownload.FileUploadUtil;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,19 +10,18 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Path;
 
 @RestController
 @RequestMapping("/api/v1")
 public class FileController {
-    private static Path foundFile;
-    private UserService userService;
-    private FileUploadUtil fileUploadUtil;
+
+    private final FileUploadUtil fileUploadUtil;
+    private final FileDownloadUtil fileDownloadUtil;
 
     @Autowired
-    public FileController(UserService userService, FileUploadUtil fileUploadUtil) {
-        this.userService = userService;
+    public FileController(FileUploadUtil fileUploadUtil, FileDownloadUtil fileDownloadUtil) {
         this.fileUploadUtil = fileUploadUtil;
+        this.fileDownloadUtil = fileDownloadUtil;
     }
 
     //TODO link file with user.
@@ -34,13 +32,15 @@ public class FileController {
 
     }
 
-    @GetMapping("/downloadFile/{fileCode}/{username}")
-    public ResponseEntity<?> downloadFile(@PathVariable("fileCode") String fileCode, @PathVariable("username") String username) {
-        return fileUploadUtil.outgoingFileHandler(fileCode, username);
-    }
-
     @GetMapping("/userPdf/{userId}")
     public User generateUserPdf(@PathVariable("userId") String userId) throws JRException, IOException {
         return fileUploadUtil.makeUserPdf(userId);
     }
+
+    @GetMapping("/downloadFile/{fileCode}/{username}")
+    public ResponseEntity<?> downloadFile(@PathVariable("fileCode") String fileCode, @PathVariable("username") String username) {
+        return fileDownloadUtil.outgoingFileHandler(fileCode, username);
+    }
+
+
 }
