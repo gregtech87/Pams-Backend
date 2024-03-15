@@ -70,6 +70,9 @@ public class SecurityConfig {
                                 "Access-Control-Allow-Origin",
                                 "Access-Control-Request-Method",
                                 "Access-Control-Request-Headers"
+//                                ,
+//                                "X-Csrf-Token",
+//                                "User-Agent"
                         )
                         .exposedHeaders("Authorization")
                         .allowCredentials(true).maxAge(3600)
@@ -109,6 +112,8 @@ public class SecurityConfig {
 //                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/note/{id}")).hasRole("EDITNOTE")
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/note/{ids}")).hasRole("EDITNOTE")
                         .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/note")).hasRole("EDITNOTE")
+
+                        .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/uploadFile")).hasRole("UPLOAD")
 
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/userstatus/**")).hasRole("STATUSCHECK")
 

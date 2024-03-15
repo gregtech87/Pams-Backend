@@ -1,5 +1,6 @@
 package com.example.pamsbackend.controller;
 
+import com.example.pamsbackend.PdfUserInfo.PdfUser;
 import com.example.pamsbackend.entity.User;
 import com.example.pamsbackend.fileUpAndDownload.FileDownloadUtil;
 import com.example.pamsbackend.fileUpAndDownload.FileUploadUtil;
@@ -28,13 +29,17 @@ public class FileController {
 
     @PostMapping("/uploadFile")
     public ResponseEntity uploadFile(@RequestParam("file") MultipartFile multipartFile, @RequestParam("username") String username) throws IOException {
+        System.out.println("FileController.uploadFile");
+        System.out.println("multipartFile = " + multipartFile);
+        System.out.println("username = " + username);
         return fileUploadUtil.incomingFileHandler(multipartFile, username);
 
     }
 
     @GetMapping("/userPdf/{userId}")
-    public User generateUserPdf(@PathVariable("userId") String userId) throws JRException, IOException {
-        return fileUploadUtil.makeUserPdf(userId);
+    public PdfUser generateUserPdf(@PathVariable("userId") String userId) throws JRException, IOException {
+        User user = fileUploadUtil.makeUserPdf(userId);
+        return user.getPdfUser();
     }
 
     @GetMapping("/downloadFile/{fileCode}/{username}")

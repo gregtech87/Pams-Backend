@@ -48,6 +48,12 @@ public class SystemData {
         } else {
             System.out.println("noteGuy present!");
         }
+        if(systemEntityService.findByUsername("fileGuy") == null){
+            SystemEntity systemEntity = new SystemEntity("fileGuy", "fileGuy", "fileGuy", "ROLE_UPLOAD");
+            System.out.println(systemEntityService.createEntity(systemEntity));
+        } else {
+            System.out.println("fileGuy present!");
+        }
 
         setEntityList();
 

@@ -22,7 +22,6 @@ import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
 @Service
 public class PDFgenerator {
 
-    //TODO link pdf to user
     private final UserServiceImpl userServiceimpl;
     private final NoteServiceImpl noteService;
     private boolean fileNameExists = false;
