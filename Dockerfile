@@ -4,12 +4,14 @@ MAINTAINER gregtech87
 
 #   Prepare deployment
 # Edit email link Emailservice line 36, 37
+# Edit filepath pdfGenerator line 43, 44
 # Set correct mail in application.properties
 # Build
 # Maven Clean and Install
 # Copy from target to project directory
 #
 COPY /Pams-Backend.war /usr/local/tomcat/webapps/ROOT.war
+COPY /src/main/resources /usr/local/tomcat/src/main/resources
 
 
 EXPOSE 8080

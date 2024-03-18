@@ -61,16 +61,16 @@ public class BinaryDeserializer extends JsonDeserializer<Binary> {
     @Override
     public Binary deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
         JsonNode node = jsonParser.readValueAsTree();
-        if (node != null) {
-            System.out.println("node1: " + node);
-            System.out.println("node1: " + node.toString().length());
-        }
+//        if (node != null) {
+//            System.out.println("node1: " + node);
+//            System.out.println("node1: " + node.toString().length());
+//        }
 
 
 //        if (node != null && node.has("$binary")) {
         //noinspection DataFlowIssue
         if (node.toString().length() > 40 && node.has("$binary")) {
-            System.out.println("node2: " + node);
+            System.out.println("node2: " + node.toString().substring(0,100));
             String base64Value = node.get("$binary").get("base64").asText();
             byte[] decodedBytes = Base64.getDecoder().decode(base64Value);
             return new Binary(decodedBytes);

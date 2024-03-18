@@ -34,6 +34,7 @@ public class User implements UserDetails {
     private float customLat;
     private float customLong;
     private List<String> notes = new ArrayList<>();
+    private List<String> personalFiles = new ArrayList<>();
     private String username;
     private String password;
     private String role;
@@ -42,6 +43,8 @@ public class User implements UserDetails {
     private ConfirmationToken confirmationToken;
     private PdfUser pdfUser;
     private long mbOfStorage = 200;
+    private long usedStorage;
+
 
     public User() {
     }
@@ -219,7 +222,7 @@ public class User implements UserDetails {
         this.customLocation = customLocation;
     }
 
-    public double getCustomLat() {
+    public float getCustomLat() {
         return customLat;
     }
 
@@ -227,7 +230,7 @@ public class User implements UserDetails {
         this.customLat = customLat;
     }
 
-    public double getCustomLong() {
+    public float getCustomLong() {
         return customLong;
     }
 
@@ -251,6 +254,22 @@ public class User implements UserDetails {
         this.mbOfStorage = mbOfStorage;
     }
 
+    public List<String> getPersonalFiles() {
+        return personalFiles;
+    }
+
+    public void setPersonalFiles(List<String> personalFiles) {
+        this.personalFiles = personalFiles;
+    }
+
+    public long getUsedStorage() {
+        return usedStorage;
+    }
+
+    public void setUsedStorage(long usedStorage) {
+        this.usedStorage = usedStorage;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -267,6 +286,7 @@ public class User implements UserDetails {
                 ", customLat=" + customLat +
                 ", customLong=" + customLong +
                 ", notes=" + notes +
+                ", personalFiles=" + personalFiles +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", role='" + role + '\'' +
@@ -275,6 +295,7 @@ public class User implements UserDetails {
                 ", confirmationToken=" + confirmationToken +
                 ", pdfUser=" + pdfUser +
                 ", mbOfStorage=" + mbOfStorage +
+                ", usedStorage=" + usedStorage +
                 '}';
     }
 }

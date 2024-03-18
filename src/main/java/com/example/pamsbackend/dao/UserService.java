@@ -16,4 +16,5 @@ public interface UserService {
     String confirmToken(String token);
     String getUserStatus(String username);
     boolean updateUserPassword(String idOldNewPassword);
+    void save(User user);
 }

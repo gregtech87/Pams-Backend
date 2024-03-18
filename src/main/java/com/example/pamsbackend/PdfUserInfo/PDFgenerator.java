@@ -1,10 +1,10 @@
 package com.example.pamsbackend.PdfUserInfo;
 
+import com.example.pamsbackend.dao.UserService;
 import com.example.pamsbackend.entity.Note;
 import com.example.pamsbackend.entity.User;
 import com.example.pamsbackend.fileUpAndDownload.InstpectFolder;
 import com.example.pamsbackend.service.NoteServiceImpl;
-import com.example.pamsbackend.service.UserServiceImpl;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -22,25 +22,26 @@ import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
 @Service
 public class PDFgenerator {
 
-    private final UserServiceImpl userServiceimpl;
+    private final UserService userService;
     private final NoteServiceImpl noteService;
     private boolean fileNameExists = false;
-    private String filename = "-UserReport.pdf";
+    private final String filename = "-UserReport.pdf";
     private String fullFilename;
 
     @Autowired
-    public PDFgenerator(UserServiceImpl userServiceimpl, NoteServiceImpl noteService) {
-        this.userServiceimpl = userServiceimpl;
+    public PDFgenerator(UserService userService, NoteServiceImpl noteService) {
+        this.userService = userService;
         this.noteService = noteService;
     }
 
     public User generateUserPDF(User user) throws JRException, IOException {
-
+        System.out.println("PDFgenerator.generateUserPDF");
         // Destination path
         Path userPath = Paths.get("User-Files" + "/" + user.getUsername());
 
         // Template path
         String filepath = "src/main/resources/pdfTemplateUserInfo/User_Info.jrxml";
+//        String filepath = "/WEB-INF/classes/resources/pdfTemplateUserInfo/User_Info.jrxml";
 
         // Read jrxml file and creating jasperdesign object
         JasperReport jasperReport = JasperCompileManager.compileReport(filepath);
@@ -112,14 +113,14 @@ public class PDFgenerator {
         if (!fileNameExists) {
             outputFile = userPath + "/" + fileCode + filename;
             user.setPdfUser(new PdfUser(fileCode, LocalDateTime.now().format(ISO_DATE_TIME)));
-            userServiceimpl.save(user);
+            userService.save(user);
         } else {
             outputFile = userPath + "/" + user.getPdfUser().getUserInfoPdfIdentifier() + filename;
             user.getPdfUser().setCreatedAt(LocalDateTime.now().format(ISO_DATE_TIME));
 
             System.out.println(LocalDateTime.now().format(ISO_DATE_TIME));
 //            System.out.println(LocalDateTime.now().format(RFC_1123_DATE_TIME));
-            userServiceimpl.save(user);
+            userService.save(user);
         }
 
 

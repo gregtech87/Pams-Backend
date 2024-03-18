@@ -58,6 +58,12 @@
             <artifactId>jasperreports</artifactId>
             <version>6.21.2</version>
         </dependency>
+        <dependency>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports-fonts</artifactId>
+            <version>6.21.2</version>
+        </dependency>
+
 
         <!--        <dependency>-->
 <!--            <groupId>org.springframework.boot</groupId>-->
@@ -66,10 +72,32 @@
 <!--        </dependency>-->
     </dependencies>
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*</include> <!-- Include other resource types if needed -->
+                    <include>pdfTemplateUserInfo/**</include> <!-- Include PDF resources -->
+                    <include>static/**</include> <!-- Include static resources -->
+                </includes>
+            </resource>
+
+<!--        <resource>-->
+<!--            <directory>User-Files</directory> &lt;!&ndash; Additional resource directory &ndash;&gt;-->
+<!--            &lt;!&ndash; Includes all files and directories &ndash;&gt;-->
+<!--            <includes>-->
+<!--                <include>**/*</include>-->
+<!--            </includes>-->
+<!--        </resource>-->
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <addResources>true</addResources>
+                    <generatedResources>User-Files</generatedResources>
+                </configuration>
             </plugin>
         </plugins>
         <finalName>${project.artifactId}</finalName>

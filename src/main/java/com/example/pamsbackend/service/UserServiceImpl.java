@@ -238,6 +238,7 @@ public class UserServiceImpl implements UserService {
         return success;
     }
 
+    @Override
     public void save(User user){
         userRepository.save(user);
     }

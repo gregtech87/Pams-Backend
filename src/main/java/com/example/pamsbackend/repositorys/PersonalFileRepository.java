@@ -1,11 +1,12 @@
 package com.example.pamsbackend.repositorys;
 
-import com.example.pamsbackend.entity.Note;
+import com.example.pamsbackend.entity.PersonalFile;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 
 @Repository
-public interface NoteRepository extends MongoRepository<Note, String> {
-
+public interface PersonalFileRepository extends MongoRepository<PersonalFile, String> {
 }
+

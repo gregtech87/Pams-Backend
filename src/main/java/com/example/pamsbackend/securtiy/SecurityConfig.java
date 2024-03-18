@@ -1,6 +1,5 @@
 package com.example.pamsbackend.securtiy;
 
-import com.example.pamsbackend.securtiy.config.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,7 +10,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -44,6 +42,11 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
+                        .allowedOrigins(
+                                "https://pam-gui.gregtech.duckdns.org",
+                                "http://localhost:5500",
+                                "http://127.0.0.1:5500",
+                                "http://192.168.77.230:443")
                         .allowedOriginPatterns(
                                 "https://pam-gui.gregtech.duckdns.org/",
                                 "https://pam-gui.gregtech.duckdns.org",
@@ -69,10 +72,12 @@ public class SecurityConfig {
                                 "Origin",
                                 "Access-Control-Allow-Origin",
                                 "Access-Control-Request-Method",
-                                "Access-Control-Request-Headers"
-//                                ,
-//                                "X-Csrf-Token",
-//                                "User-Agent"
+                                "Access-Control-Request-Headers",
+                                "multipart/form-data"
+
+
+
+
                         )
                         .exposedHeaders("Authorization")
                         .allowCredentials(true).maxAge(3600)
@@ -95,8 +100,7 @@ public class SecurityConfig {
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/hello")).permitAll()
 //                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/token/{id}")).hasRole("USER")
 
-                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/downloadFile/{fileCode}/{username}")).hasRole("USER")
-                        .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/uploadFile")).hasRole("USER")
+
 
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/login")).hasRole("USER")
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/users")).hasRole("USER")
@@ -113,7 +117,15 @@ public class SecurityConfig {
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/note/{ids}")).hasRole("EDITNOTE")
                         .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/note")).hasRole("EDITNOTE")
 
+
+//                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/downloadFile/{fileCode}/{username}")).hasRole("USER")
+//                        .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/uploadFile")).hasRole("USER")
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/file/{ids}")).hasRole("UPLOAD")
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/downloadFile/{fileCode}/{username}")).hasRole("UPLOAD")
                         .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/uploadFile")).hasRole("UPLOAD")
+
+
+
 
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/userstatus/**")).hasRole("STATUSCHECK")
 

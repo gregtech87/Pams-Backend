@@ -1,10 +1,13 @@
 package com.example.pamsbackend.fileUpAndDownload;
 
 import com.example.pamsbackend.PdfUserInfo.PDFgenerator;
+import com.example.pamsbackend.dao.PersonalFileService;
 import com.example.pamsbackend.dao.UserService;
+import com.example.pamsbackend.entity.PersonalFile;
 import com.example.pamsbackend.entity.User;
 import net.sf.jasperreports.engine.JRException;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,18 +21,23 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
+
+import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
 
 @Service
 public class FileUploadUtil {
 
     private final UserService userService;
+    private final PersonalFileService personalFileService;
     private final PDFgenerator pdFgenerator;
 
     @Autowired
-    public FileUploadUtil(UserService userService, PDFgenerator pdFgenerator) {
+    public FileUploadUtil(UserService userService, PersonalFileService personalFileService, PDFgenerator pdFgenerator) {
         this.userService = userService;
+        this.personalFileService = personalFileService;
         this.pdFgenerator = pdFgenerator;
     }
 
@@ -64,7 +72,7 @@ public class FileUploadUtil {
 
             if (!fileNameExists && !response.isStorageLimitExceed()) {
                 // TODO ADD TO identifier list
-                response.setIdentifier(saveFile(fileName, multipartFile, username));
+                response.setIdentifier(saveFile(fileName, multipartFile, user));
                 return new ResponseEntity<>(response, HttpStatus.OK);
             } else {
                 System.out.println("File already exists!");
@@ -74,9 +82,9 @@ public class FileUploadUtil {
         }
     }
 
-    private String saveFile(String fileName, MultipartFile multipartFile, String username) throws IOException {
+    private String saveFile(String fileName, MultipartFile multipartFile, User user) throws IOException {
 
-        Path uploadPath = Paths.get("User-Files/" + username);
+        Path uploadPath = Paths.get("User-Files/" + user.getUsername());
 
         String fileCode = RandomStringUtils.randomAlphanumeric(15);
 
@@ -86,6 +94,7 @@ public class FileUploadUtil {
         } catch (IOException ioe) {
             throw new IOException("Could not save file: " + fileName, ioe);
         }
+        addToPersonalFilesList(multipartFile, fileCode, user);
         return fileCode;
     }
 
@@ -93,5 +102,18 @@ public class FileUploadUtil {
         Optional<User> dbUser = userService.getUserById(userId);
             User user = dbUser.get();
             return pdFgenerator.generateUserPDF(user);
+    }
+
+    private void addToPersonalFilesList(MultipartFile multipartFile, String fileCode, User user) {
+        PersonalFile personalFile = new PersonalFile();
+        personalFile.setId(new ObjectId().toString());
+        personalFile.setFileName(multipartFile.getOriginalFilename());
+        personalFile.setSize(multipartFile.getSize());
+        personalFile.setIdentifier(fileCode);
+        personalFile.setCreatedAt(LocalDateTime.now().format(ISO_DATE_TIME));
+        personalFileService.saveFile(personalFile);
+        user.getPersonalFiles().add(personalFile.getId());
+        user.setUsedStorage(user.getUsedStorage() + multipartFile.getSize());
+        userService.save(user);
     }
 }

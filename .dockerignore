@@ -1,7 +1,9 @@
 .idea/
 .mvn/
-src/
+src/main/java
+src/test
 target/
+User-Files/**
 .gitignore
 HELP.md
 mvnw

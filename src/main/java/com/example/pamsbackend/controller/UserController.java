@@ -19,9 +19,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
 import java.net.Inet4Address;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 @RestController
+@CrossOrigin(origins = "https://pam-gui.gregtech.duckdns.org")
 @RequestMapping("/api/v1")
 public class UserController {
 
@@ -42,10 +46,8 @@ public class UserController {
     @PostConstruct
     public void loadSystemData() throws IOException, JRException {
         System.out.println(Inet4Address.getLocalHost().getHostAddress());
-        String hostAddress = Inet4Address.getLocalHost().getHostAddress();
-
-        System.out.println(System.getProperty("spring.data.mongodb.host"));
         systemData.load();
+
         User u = userServiceimpl.findByUsername("testGuy");
         if (u == null) {
             User user = new User("t@g.com", "testGuy", "testGuy", "testGuy", "ROLE_USER");
@@ -54,7 +56,7 @@ public class UserController {
             byte[] decodedBytes = Base64.getDecoder().decode("noImages");
             user.setProfilePic(new Binary(decodedBytes));
             user.setProfilePictureData(new PictureData("name", "type", 0, 0, "LMD"));
-            user.setAddress(new Address("bjärme", 150, 4654, "city"));
+            user.setAddress(new Address("bjärme", 150, 85592, "kovland"));
             user.setPhone("646843135");
             user.setDateOfBirth("2154-12-05");
             user.setPdfUser(new PdfUser());
