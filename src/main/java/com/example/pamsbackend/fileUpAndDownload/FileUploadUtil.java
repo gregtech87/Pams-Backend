@@ -105,9 +105,11 @@ public class FileUploadUtil {
     }
 
     private void addToPersonalFilesList(MultipartFile multipartFile, String fileCode, User user) {
+
         PersonalFile personalFile = new PersonalFile();
         personalFile.setId(new ObjectId().toString());
         personalFile.setFileName(multipartFile.getOriginalFilename());
+        personalFile.setType(multipartFile.getContentType());
         personalFile.setSize(multipartFile.getSize());
         personalFile.setIdentifier(fileCode);
         personalFile.setCreatedAt(LocalDateTime.now().format(ISO_DATE_TIME));

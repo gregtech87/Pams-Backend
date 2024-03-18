@@ -35,6 +35,7 @@ public class EmailService implements EmailSender {
 
 //        String link = "https://pam-api.gregtech.duckdns.org/api/v1/registration/confirm?token=" + token;
         String link = "http://localhost:8586/api/v1/registration/confirm?token=" + token;
+//        String link = "http://localhost:8585/api/v1/registration/confirm?token=" + token;
         send( user.getEmail(), buildEmail(user.getFirstName(), link));
         return user;
     }

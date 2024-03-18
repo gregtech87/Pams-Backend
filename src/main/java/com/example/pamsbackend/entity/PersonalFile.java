@@ -3,6 +3,7 @@ package com.example.pamsbackend.entity;
 public class PersonalFile {
     private String id;
     private String fileName;
+    private String type;
     private String identifier;
     private String createdAt;
     private long size;
@@ -50,11 +51,20 @@ public class PersonalFile {
         this.createdAt = createdAt;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     @Override
     public String toString() {
         return "PersonalFile{" +
                 "id='" + id + '\'' +
                 ", fileName='" + fileName + '\'' +
+                ", type='" + type + '\'' +
                 ", identifier='" + identifier + '\'' +
                 ", createdAt='" + createdAt + '\'' +
                 ", size=" + size +

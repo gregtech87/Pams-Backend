@@ -81,7 +81,13 @@
                     <include>static/**</include> <!-- Include static resources -->
                 </includes>
             </resource>
-
+            <resource>
+                <directory>webapps</directory>
+                <includes>
+                    <include>index.html</include> <!-- Include other resource types if needed -->
+                    <include>dribbble_1.gif</include> <!-- Include other resource types if needed -->
+                </includes>
+            </resource>
 <!--        <resource>-->
 <!--            <directory>User-Files</directory> &lt;!&ndash; Additional resource directory &ndash;&gt;-->
 <!--            &lt;!&ndash; Includes all files and directories &ndash;&gt;-->

@@ -1,6 +1,7 @@
 
 package com.example.pamsbackend.service;
 
+import com.example.pamsbackend.PdfUserInfo.PdfUser;
 import com.example.pamsbackend.dao.EmailSender;
 import com.example.pamsbackend.dao.UserService;
 import com.example.pamsbackend.entity.User;
@@ -114,6 +115,7 @@ public class UserServiceImpl implements UserService {
                 user.setRole("ROLE_USER");
                 String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
                 user.setPassword(encodedPassword);
+                user.setPdfUser(new PdfUser());
                 user = emailService.generateToken(user);
             }
 
