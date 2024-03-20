@@ -5,13 +5,11 @@ import com.example.pamsbackend.PdfUserInfo.PdfUser;
 import com.example.pamsbackend.SystemData;
 import com.example.pamsbackend.dao.NoteService;
 import com.example.pamsbackend.entity.Address;
-import com.example.pamsbackend.entity.Note;
 import com.example.pamsbackend.entity.PictureData;
 import com.example.pamsbackend.entity.User;
 import com.example.pamsbackend.service.UserServiceImpl;
 import jakarta.annotation.PostConstruct;
 import net.sf.jasperreports.engine.*;
-import org.bson.types.BSONTimestamp;
 import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -19,9 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
 import java.net.Inet4Address;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 @RestController
@@ -89,7 +84,7 @@ public class UserController {
 
     @GetMapping("/users")
     public List<User> getAllUsers() {
-        return userServiceimpl.getAllUsers();
+        return userServiceimpl.findAllUsers();
     }
 //
 //    @GetMapping("/token/{tokenString}")
@@ -100,8 +95,8 @@ public class UserController {
     @GetMapping("/user/{id}")
     public Optional<User> getUserById(@PathVariable String id) {
         System.out.println(id);
-        System.out.println(userServiceimpl.getUserById(id));
-        return userServiceimpl.getUserById(id);
+        System.out.println(userServiceimpl.findUserById(id));
+        return userServiceimpl.findUserById(id);
     }
 
     @PostMapping("/user")

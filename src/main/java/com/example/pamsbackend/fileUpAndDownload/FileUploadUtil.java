@@ -99,7 +99,7 @@ public class FileUploadUtil {
     }
 
     public User makeUserPdf(String userId) throws JRException, IOException {
-        Optional<User> dbUser = userService.getUserById(userId);
+        Optional<User> dbUser = userService.findUserById(userId);
             User user = dbUser.get();
             return pdFgenerator.generateUserPDF(user);
     }

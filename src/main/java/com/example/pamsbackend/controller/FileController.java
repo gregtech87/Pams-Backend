@@ -6,7 +6,6 @@ import com.example.pamsbackend.entity.PersonalFile;
 import com.example.pamsbackend.entity.User;
 import com.example.pamsbackend.fileUpAndDownload.FileDownloadUtil;
 import com.example.pamsbackend.fileUpAndDownload.FileUploadUtil;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -63,26 +62,9 @@ public class FileController {
     }
 
     @DeleteMapping("/file/{json}")
-    public String deleteFile3(@PathVariable String json) throws JsonProcessingException {
+    public String deleteFile(@PathVariable String json) throws IOException {
         System.err.println("FileController.deleteFile3");
         System.out.println(json);
-        return personalFileService.deleteFiles3(json);
+        return personalFileService.deleteFile(json);
     }
-    @DeleteMapping("/file/{id}/{identifier}")
-    public String deleteFile(@PathVariable String id, @PathVariable String identifier) {
-        System.err.println("FileController.deleteFile");
-        System.out.println(id);
-        System.out.println(identifier);
-        return personalFileService.deleteFiles(id, identifier);
-    }
-
-//    @DeleteMapping("/file}")
-//    public String deleteFile2(@RequestParam("file") MultipartFile multipartFile) {
-//        System.out.println("FileController.deleteFile2");
-//        System.out.println("multipartFile = " + multipartFile);
-//        System.out.println("multipartFile = " + multipartFile.getOriginalFilename());
-//        System.out.println("multipartFile = " + multipartFile.getResource());
-//        System.out.println("multipartFile = " + multipartFile.getSize());
-//        return personalFileService.deleteFiles2(multipartFile);
-//    }
 }

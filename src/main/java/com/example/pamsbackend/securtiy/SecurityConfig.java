@@ -105,9 +105,7 @@ public class SecurityConfig {
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/login")).hasRole("USER")
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/users")).hasRole("USER")
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/downloadFile/{fileCode}/{username}")).hasRole("USER")
-                        .requestMatchers(mvc.pattern(HttpMethod.DELETE, "/api/v1/file")).hasRole("USER")
                         .requestMatchers(mvc.pattern(HttpMethod.DELETE, "/api/v1/file/{json}")).hasRole("USER")
-                        .requestMatchers(mvc.pattern(HttpMethod.DELETE, "/api/v1/file/{id}/{identifier}")).hasRole("USER")
 
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/user/{id}")).hasRole("EDITUSER")
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/userPdf/{userId}")).hasRole("EDITUSER")
