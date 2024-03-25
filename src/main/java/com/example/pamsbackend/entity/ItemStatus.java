@@ -1,7 +1,7 @@
 package com.example.pamsbackend.entity;
 
 public class ItemStatus {
-    private String state;
+
     private Address currentLocation;
     private String nameOfHolder;
     private String purpose;
@@ -9,18 +9,9 @@ public class ItemStatus {
     public ItemStatus() {
     }
 
-    public ItemStatus(String state, String nameOfHolder, String purpose) {
-        this.state = state;
+    public ItemStatus(String nameOfHolder, String purpose) {
         this.nameOfHolder = nameOfHolder;
         this.purpose = purpose;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
     }
 
     public Address getCurrentLocation() {
@@ -50,7 +41,6 @@ public class ItemStatus {
     @Override
     public String toString() {
         return "ItemStatus{" +
-                "state='" + state + '\'' +
                 ", currentLocation=" + currentLocation +
                 ", nameOfHolder='" + nameOfHolder + '\'' +
                 ", purpose='" + purpose + '\'' +

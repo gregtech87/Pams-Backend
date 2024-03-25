@@ -21,6 +21,7 @@ public class NoteController {
         this.noteServiceImpl = noteServiceImpl;
     }
 
+    //TODO remove
     @GetMapping("/notes")
     public List<Note> getAll() {
         return noteServiceImpl.getAllNotes();

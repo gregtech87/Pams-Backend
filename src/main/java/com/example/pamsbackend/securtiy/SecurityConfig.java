@@ -124,6 +124,10 @@ public class SecurityConfig {
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/file/{ids}")).hasRole("UPLOAD")
                         .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/uploadFile")).hasRole("UPLOAD")
 
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/item")).hasRole("EDITITEM")
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/item/{ids}")).hasRole("EDITITEM")
+                        .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/item")).hasRole("EDITITEM")
+
 
 
 

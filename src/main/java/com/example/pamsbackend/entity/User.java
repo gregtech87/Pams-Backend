@@ -34,6 +34,7 @@ public class User implements UserDetails {
     private float customLat;
     private float customLong;
     private List<String> notes = new ArrayList<>();
+    private List<String> items = new ArrayList<>();
     private List<String> personalFiles = new ArrayList<>();
     private String username;
     private String password;
@@ -270,6 +271,14 @@ public class User implements UserDetails {
         this.usedStorage = usedStorage;
     }
 
+    public List<String> getItems() {
+        return items;
+    }
+
+    public void setItems(List<String> items) {
+        this.items = items;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -286,6 +295,7 @@ public class User implements UserDetails {
                 ", customLat=" + customLat +
                 ", customLong=" + customLong +
                 ", notes=" + notes +
+                ", items=" + items +
                 ", personalFiles=" + personalFiles +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
