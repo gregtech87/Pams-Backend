@@ -11,7 +11,6 @@ import net.sf.jasperreports.engine.JRException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -54,6 +53,7 @@ public class FileUploadUtil {
         response.setSize(size);
         long maxFilesize = response.getMaxFileSize() * 1024 * 1024;
 
+
         System.out.println("FileUploadUtil.incomingFileHandler");
         System.out.println("size: " + multipartFile.getSize());
         System.out.println("orgName: " + multipartFile.getOriginalFilename());
@@ -65,6 +65,8 @@ public class FileUploadUtil {
         System.out.println("*" + username + "*");
         System.out.println("itemId = " + itemId);
         System.out.println();
+
+
         if (size > maxFilesize) {
             response.setFileSizeExceed(true);
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -73,17 +75,35 @@ public class FileUploadUtil {
             return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
         } else {
             User user = userService.findByUsername(username);
+
+            Path uploadPath = null;
+            Item item = null;
+            if (itemId == null) {
+                uploadPath = Paths.get("User-Files/" + user.getUsername());
+            } else {
+                Optional<Item> dbItem = itemService.findById(itemId);
+                if (dbItem.isPresent()) {
+                    item = dbItem.get();
+                    uploadPath = Paths.get("User-Files/" + user.getUsername() + "/" + item.getTitle());
+                }
+            }
+
             // Check if there is storage space left
-            response.setStorageLimitExceed(new InstpectFolder().inspectFolderSize(username, size, user.getMbOfStorage()));
+            response.setStorageLimitExceed(new InstpectFolder().inspectFolderSize(username, size, user.getMbOfStorage(), uploadPath));
             System.out.println("response = " + response);
 //            Check if fileName exist.
-            boolean fileNameExists = new InstpectFolder().inspectFileName(fileName, username);
+            boolean fileNameExists = new InstpectFolder().inspectFileName(fileName, username, uploadPath);
+            System.out.println("***************************************************************");
+            System.out.println("FileUploadUtil.incomingFileHandler");
 
             if (!fileNameExists && !response.isStorageLimitExceed() && itemId == null) {
-                response.setIdentifier(saveFile(fileName, multipartFile, user, null));
+                System.out.println("user = " + user);
+                response.setIdentifier(saveFile(fileName, multipartFile, user, uploadPath, null));
                 return new ResponseEntity<>(response, HttpStatus.OK);
             } else if (!fileNameExists && !response.isStorageLimitExceed() && itemId != null) {
-                response.setIdentifier(saveFile(fileName, multipartFile, user, itemId));
+                assert uploadPath != null;
+                System.out.println("user = " + user);
+                response.setIdentifier(saveFile(fileName, multipartFile, user, uploadPath, item));
                 return new ResponseEntity<>(response, HttpStatus.OK);
             } else {
                 System.out.println("File already exists!");
@@ -93,30 +113,45 @@ public class FileUploadUtil {
         }
     }
 
-    private String saveFile(String fileName, MultipartFile multipartFile, User user, String itemId) throws IOException {
+    private String saveFile(String fileName, MultipartFile multipartFile, User user, Path uploadPath, Item item) throws IOException {
 
-        Path uploadPath = Paths.get("User-Files/" + user.getUsername());
+//        Path uploadPath = null;
+//        Item item = null;
+//        if (itemId == null){
+//            uploadPath = Paths.get("User-Files/" + user.getUsername());
+//        } else {
+//            Optional<Item> dbItem = itemService.findById(itemId);
+//            if (dbItem.isPresent()) {
+//                item = dbItem.get();
+//                uploadPath = Paths.get("User-Files/" + user.getUsername() + "/" +item.getTitle());
+//            }
+//
+//        }
 
         String fileCode = RandomStringUtils.randomAlphanumeric(15);
 
         try (InputStream inputStream = multipartFile.getInputStream()) {
+            assert uploadPath != null;
             Path filePath = uploadPath.resolve(fileCode + "-" + fileName);
             Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException ioe) {
             throw new IOException("Could not save file: " + fileName, ioe);
         }
-        if (itemId == null){
+        if (item == null) {
             addToPersonalFilesList(multipartFile, fileCode, user);
         } else {
-            ssfsdfsdfd(multipartFile, fileCode, user, itemId);
+            addToItemsImageList(multipartFile, fileCode, user, item);
         }
         return fileCode;
     }
 
     public User makeUserPdf(String userId) throws JRException, IOException {
         Optional<User> dbUser = userService.findUserById(userId);
+        if (dbUser.isPresent()) {
             User user = dbUser.get();
             return pdFgenerator.generateUserPDF(user);
+        }
+        return null;
     }
 
     private void addToPersonalFilesList(MultipartFile multipartFile, String fileCode, User user) {
@@ -126,17 +161,12 @@ public class FileUploadUtil {
         userService.save(user);
     }
 
-    private void ssfsdfsdfd(MultipartFile multipartFile, String fileCode, User user, String itemId) {
-        System.out.println("FileUploadUtil.ssfsdfsdfd");
+    private void addToItemsImageList(MultipartFile multipartFile, String fileCode, User user, Item item) {
         PersonalFile personalFile = setFileAttribute(multipartFile, fileCode);
-        Optional<Item> dbItem = itemService.findById(itemId);
-        if (dbItem.isPresent()){
-            Item item = dbItem.get();
-            System.out.println("item = " + item);
-            item.getAdditionalPictureIds().add(personalFile.getId());
-            System.out.println("item = " + item);
-            itemService.saveItem(item);
-        }
+        item.getAdditionalPictureIds().add(personalFile.getId());
+        itemService.saveItem(item);
+        user.setUsedStorage(user.getUsedStorage() + multipartFile.getSize());
+        userService.save(user);
 
     }
 

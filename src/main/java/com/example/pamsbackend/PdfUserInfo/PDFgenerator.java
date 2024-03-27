@@ -91,7 +91,7 @@ public class PDFgenerator {
          * If file exists, make sure new file overwrite the old.
          * If not finding folder, create it.
          * */
-        fileNameExists = new InstpectFolder().inspectFileName(filename.substring(1 ), user.getUsername());
+        fileNameExists = new InstpectFolder().inspectFileName(filename.substring(1 ), user.getUsername(), userPath);
 //        try {
 //            Files.list(userPath).forEach(file -> {
 //                if (file.getFileName().toString().endsWith(filename)) {

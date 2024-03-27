@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "https://pam-gui.gregtech.duckdns.org")
@@ -35,7 +36,13 @@ public class ItemController {
         return itemService.findAllItems();
     }
 
-    @GetMapping("/item/{ids}")
+    @GetMapping("/item/{id}")
+    public Optional<Item> getItem(@PathVariable String id) {
+        System.out.println("ItemController.getItem");
+        System.out.println("items = " + id);
+        return itemService.findById(id);
+    }
+    @GetMapping("/items/{ids}")
     public List<Item> getItems(@PathVariable List<String> ids) {
         System.out.println("ItemController.getItems");
         System.out.println("items = " + ids);

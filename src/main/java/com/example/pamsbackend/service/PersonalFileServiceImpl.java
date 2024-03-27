@@ -1,7 +1,9 @@
 package com.example.pamsbackend.service;
 
+import com.example.pamsbackend.dao.ItemService;
 import com.example.pamsbackend.dao.PersonalFileService;
 import com.example.pamsbackend.dao.UserService;
+import com.example.pamsbackend.entity.Item;
 import com.example.pamsbackend.entity.PersonalFile;
 import com.example.pamsbackend.entity.User;
 import com.example.pamsbackend.repositorys.PersonalFileRepository;
@@ -26,14 +28,16 @@ public class PersonalFileServiceImpl implements PersonalFileService {
 
     private final PersonalFileRepository personalFileRepository;
     private final UserService userService;
+    private final ItemService itemService;
     private final MongoTemplate mongoTemplate;
     private boolean correctOwner;
     private long fileSize;
 
     @Autowired
-    public PersonalFileServiceImpl(PersonalFileRepository personalFileRepository, UserService userService, MongoTemplate mongoTemplate) {
+    public PersonalFileServiceImpl(PersonalFileRepository personalFileRepository, UserService userService, ItemService itemService, MongoTemplate mongoTemplate) {
         this.personalFileRepository = personalFileRepository;
         this.userService = userService;
+        this.itemService = itemService;
         this.mongoTemplate = mongoTemplate;
     }
 
@@ -69,16 +73,28 @@ public class PersonalFileServiceImpl implements PersonalFileService {
         Map<String, Object> jsonMap = mapper.readValue(jsonString, new TypeReference<Map<String, Object>>() {
         });
         System.err.println("jsonMap = " + jsonMap);
-        System.err.println("jsonMap = " + jsonMap.get("id"));
+        System.err.println("jsonMap = " + jsonMap.get("userId"));
         boolean fileFound = false;
         correctOwner = false;
         String fileId = jsonMap.get("fileId").toString();
         String fileIdentifier = jsonMap.get("fileIdentifier").toString();
         String fileName = jsonMap.get("fileName").toString();
         String userId = jsonMap.get("userId").toString();
+        Item item = null;
+
+        if (jsonMap.get("itemId") != null){
+            Optional<Item> dbItem = itemService.findById(jsonMap.get("itemId").toString());
+            if (dbItem.isPresent()){
+                item = dbItem.get();
+            }
+        }
+        System.err.println("item = " + item);
+
 
         PersonalFile personalFile;
         User user = new User();
+        Path directoryPath = null;
+
 
         Optional<PersonalFile> dbPersonalFile = personalFileRepository.findById(fileId);
         if (dbPersonalFile.isPresent()) {
@@ -86,28 +102,59 @@ public class PersonalFileServiceImpl implements PersonalFileService {
             fileSize = personalFile.getSize();
             System.out.println("dbPersonalFile = " + dbPersonalFile);
             fileFound = true;
-            Optional<User> dbUser = userService.findUserById(jsonMap.get("userId").toString());
-            if (dbUser.isPresent()) {
-                user = dbUser.get();
-                System.out.println("user = " + user.getUsername());
-                user.getPersonalFiles().forEach(id -> {
-                    if (id.equals(personalFile.getId())) {
-                        correctOwner = true;
-                    }
-                });
-            }
+        } else personalFile = null;
+
+        Optional<User> dbUser = userService.findUserById(userId);
+        if (dbUser.isPresent() && fileFound && item == null) {
+            user = dbUser.get();
+            System.out.println("user = " + user.getUsername());
+            user.getPersonalFiles().forEach(id -> {
+                if (id.equals(personalFile.getId())) {
+                    correctOwner = true;
+                }
+            });
+            directoryPath = Paths.get("User-Files/" + user.getUsername());
         }
+
+        if (dbUser.isPresent() && fileFound && item != null) {
+            User u = dbUser.get();
+            item.getAdditionalPictureIds().forEach(id -> {
+                if (id.equals(personalFile.getId())) {
+                    correctOwner = true;
+                }
+            });
+            directoryPath = Paths.get("User-Files/" + u.getUsername() + "/" + item.getTitle());
+        }
+
         System.out.println("fileFound = " + fileFound);
         System.out.println("correctOwner = " + correctOwner);
         System.out.println("fileSize = " + fileSize);
-        if (fileFound && correctOwner) {
-            Path uploadPath = Paths.get("User-Files/" + user.getUsername());
-            Path filePath = uploadPath.resolve(fileIdentifier + "-" + fileName);
+
+        if (dbUser.isPresent() && fileFound && correctOwner) {
+            user=dbUser.get();
+            System.err.println("********** user = " + user);
+
+            Path filePath = directoryPath.resolve(fileIdentifier + "-" + fileName);
+            System.err.println("filePath = " + filePath);
             Files.deleteIfExists(filePath);
-            user.getPersonalFiles().remove(fileId);
-            user.setUsedStorage(user.getUsedStorage()-fileSize);
-            userService.save(user);
+            System.err.println("filePath2 = " + Files.notExists(filePath));
+            System.err.println("item = " + item);
+            if (item == null){
+                user.getPersonalFiles().remove(fileId);
+                user.setUsedStorage(user.getUsedStorage()-fileSize);
+                userService.save(user);
+            } else {
+                System.err.println("else");
+                item.getAdditionalPictureIds().remove(fileId);
+                System.err.println("user = " + user);
+                user.setUsedStorage(user.getUsedStorage()-fileSize);
+                System.err.println("user = " + user);
+                itemService.saveItem(item);
+                userService.save(user);
+            }
+
             personalFileRepository.deleteById(fileId);
+
             if (Files.notExists(filePath)) {
                 return "File deleted sucessfully!";
             } else {

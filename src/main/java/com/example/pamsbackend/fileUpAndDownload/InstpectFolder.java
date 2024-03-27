@@ -19,33 +19,34 @@ public class InstpectFolder {
      * Checks if folder contain file with same name.
      * If error finding folder, create it.
      * */
-    public boolean inspectFileName(String fileName, String username) throws IOException {
+    public boolean inspectFileName(String fileName, String username, Path uploadPath) throws IOException {
         System.out.println("InstpectFolder.inspectFileName");
         System.out.println("fileName = " + fileName);
 
-        Path userPath = Paths.get("User-Files/" + username);
+//        Path userPath = Paths.get("User-Files/" + username);
         try {
-            Files.list(userPath).forEach(file -> {
+            Files.list(uploadPath).forEach(file -> {
                 if (file.getFileName().toString().endsWith(fileName)) {
                     fileNameExists = true;
                 }
             });
         } catch (IOException e) {
-            if (!Files.exists(userPath)) {
-                System.out.println("******************* NEW DIRECTORY CREATED: " + userPath + " ******************");
-                Files.createDirectories(userPath);
+            if (!Files.exists(uploadPath)) {
+                System.out.println("******************* NEW DIRECTORY CREATED: " + uploadPath + " ******************");
+                Files.createDirectories(uploadPath);
             }
             System.out.println("First time user: " + username + " Uploads a file!");
         }
         return fileNameExists;
     }
 
-    public boolean inspectFolderSize(String username, long fileSize, long mbOfStorage) {
+    public boolean inspectFolderSize(String username, long fileSize, long mbOfStorage, Path uploadPath) {
         long maxSizePerUser = 1024*1024*mbOfStorage;
-        Path userPath = Paths.get("User-Files/" + username);
+//        Path userPath = Paths.get("User-Files/" + username);
+
         long size = 0;
         try {
-            size = Files.list(userPath).mapToLong(file -> {
+            size = Files.list(uploadPath).mapToLong(file -> {
                         try {
                             return Files.size(file);
                         } catch (IOException e) {

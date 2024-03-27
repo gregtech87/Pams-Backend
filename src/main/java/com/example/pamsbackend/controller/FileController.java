@@ -61,7 +61,11 @@ public class FileController {
 
     @GetMapping("/downloadFile/{fileCode}/{username}")
     public ResponseEntity<?> downloadFile(@PathVariable("fileCode") String fileCode, @PathVariable("username") String username) {
-        return fileDownloadUtil.outgoingFileHandler(fileCode, username);
+        return fileDownloadUtil.outgoingFileHandler(fileCode, username, null);
+    }
+    @GetMapping("/downloadFile/{fileCode}/{username}/{galleryName}")
+    public ResponseEntity<?> downloadGalleryFile(@PathVariable("fileCode") String fileCode, @PathVariable("username") String username, @PathVariable String galleryName) {
+        return fileDownloadUtil.outgoingFileHandler(fileCode, username, galleryName);
     }
 
     @GetMapping("/file/{ids}")
@@ -73,7 +77,7 @@ public class FileController {
 
     @DeleteMapping("/file/{json}")
     public String deleteFile(@PathVariable String json) throws IOException {
-        System.err.println("FileController.deleteFile3");
+        System.err.println("FileController.deleteFile");
         System.out.println(json);
         return personalFileService.deleteFile(json);
     }

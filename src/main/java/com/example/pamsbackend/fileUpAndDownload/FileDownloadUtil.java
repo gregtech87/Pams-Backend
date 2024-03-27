@@ -17,28 +17,19 @@ import org.springframework.stereotype.Service;
 public class FileDownloadUtil {
     private Path foundFile;
 
-    public Resource getFileAsResource(String fileCode, String username) throws IOException {
-        Path dirPath = Paths.get("User-Files/" + username);
-
-        Files.list(dirPath).forEach(file -> {
-            if (file.getFileName().toString().startsWith(fileCode)) {
-                foundFile = file;
-                return;
-            }
-        });
-
-        if (foundFile != null) {
-            return new UrlResource(foundFile.toUri());
-        }
-
-        return null;
-    }
-
-    public ResponseEntity<?> outgoingFileHandler(String fileCode, String username) {
+    public ResponseEntity<?> outgoingFileHandler(String fileCode, String username, String galleryName) {
         FileDownloadUtil downloadUtil = new FileDownloadUtil();
         Resource resource = null;
+
+        Path downloadPath = null;
+        if (galleryName == null){
+            downloadPath = Paths.get("User-Files/" + username);
+        } else {
+            downloadPath = Paths.get("User-Files/" + username + "/" + galleryName);
+        }
+
         try {
-            resource = downloadUtil.getFileAsResource(fileCode, username);
+            resource = downloadUtil.getFileAsResource(fileCode, username, downloadPath);
         } catch (IOException e) {
             return ResponseEntity.internalServerError().build();
         }
@@ -54,5 +45,22 @@ public class FileDownloadUtil {
                 .contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
                 .body(resource);
+    }
+
+    public Resource getFileAsResource(String fileCode, String username, Path downloadPath) throws IOException {
+//        Path dirPath = Paths.get("User-Files/" + username);
+
+        Files.list(downloadPath).forEach(file -> {
+            if (file.getFileName().toString().startsWith(fileCode)) {
+                foundFile = file;
+//                return;
+            }
+        });
+
+        if (foundFile != null) {
+            return new UrlResource(foundFile.toUri());
+        }
+
+        return null;
     }
 }
