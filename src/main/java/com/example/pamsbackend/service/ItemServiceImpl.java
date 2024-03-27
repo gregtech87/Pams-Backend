@@ -47,7 +47,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item registerNote(Item newItem) {
+    public Item registerItem(Item newItem) {
         newItem.setId(new ObjectId().toString());
         System.out.println("ItemServiceImpl.registerNote");
         System.out.println("newItem = " + newItem);
@@ -62,7 +62,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item saveNote(Item item) {
+    public Item saveItem(Item item) {
         return itemRepository.save(item);
     }
 

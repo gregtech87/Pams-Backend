@@ -1,14 +1,17 @@
 package com.example.pamsbackend.fileUpAndDownload;
 
 import com.example.pamsbackend.PdfUserInfo.PDFgenerator;
+import com.example.pamsbackend.dao.ItemService;
 import com.example.pamsbackend.dao.PersonalFileService;
 import com.example.pamsbackend.dao.UserService;
+import com.example.pamsbackend.entity.Item;
 import com.example.pamsbackend.entity.PersonalFile;
 import com.example.pamsbackend.entity.User;
 import net.sf.jasperreports.engine.JRException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -32,23 +35,26 @@ public class FileUploadUtil {
 
     private final UserService userService;
     private final PersonalFileService personalFileService;
+    private final ItemService itemService;
     private final PDFgenerator pdFgenerator;
 
     @Autowired
-    public FileUploadUtil(UserService userService, PersonalFileService personalFileService, PDFgenerator pdFgenerator) {
+    public FileUploadUtil(UserService userService, PersonalFileService personalFileService, ItemService itemService, PDFgenerator pdFgenerator) {
         this.userService = userService;
         this.personalFileService = personalFileService;
+        this.itemService = itemService;
         this.pdFgenerator = pdFgenerator;
     }
 
-    public ResponseEntity incomingFileHandler(MultipartFile multipartFile, String username) throws IOException {
+    public ResponseEntity incomingFileHandler(MultipartFile multipartFile, String username, String itemId) throws IOException {
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
         long size = multipartFile.getSize();
         FileUploadResponse response = new FileUploadResponse();
         response.setFileName(fileName);
         response.setSize(size);
+        long maxFilesize = response.getMaxFileSize() * 1024 * 1024;
 
-
+        System.out.println("FileUploadUtil.incomingFileHandler");
         System.out.println("size: " + multipartFile.getSize());
         System.out.println("orgName: " + multipartFile.getOriginalFilename());
         System.out.println("fname: " + multipartFile.getName());
@@ -57,22 +63,27 @@ public class FileUploadUtil {
         System.out.println("mf: " + multipartFile);
         System.out.println(username);
         System.out.println("*" + username + "*");
+        System.out.println("itemId = " + itemId);
         System.out.println();
-
-        if (size == 0 || username.isEmpty()) {
+        if (size > maxFilesize) {
+            response.setFileSizeExceed(true);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else if (size == 0 || username.isEmpty()) {
             response.setUserNamePresent(false);
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
         } else {
             User user = userService.findByUsername(username);
             // Check if there is storage space left
             response.setStorageLimitExceed(new InstpectFolder().inspectFolderSize(username, size, user.getMbOfStorage()));
-
+            System.out.println("response = " + response);
 //            Check if fileName exist.
             boolean fileNameExists = new InstpectFolder().inspectFileName(fileName, username);
 
-            if (!fileNameExists && !response.isStorageLimitExceed()) {
-                // TODO ADD TO identifier list
-                response.setIdentifier(saveFile(fileName, multipartFile, user));
+            if (!fileNameExists && !response.isStorageLimitExceed() && itemId == null) {
+                response.setIdentifier(saveFile(fileName, multipartFile, user, null));
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else if (!fileNameExists && !response.isStorageLimitExceed() && itemId != null) {
+                response.setIdentifier(saveFile(fileName, multipartFile, user, itemId));
                 return new ResponseEntity<>(response, HttpStatus.OK);
             } else {
                 System.out.println("File already exists!");
@@ -82,7 +93,7 @@ public class FileUploadUtil {
         }
     }
 
-    private String saveFile(String fileName, MultipartFile multipartFile, User user) throws IOException {
+    private String saveFile(String fileName, MultipartFile multipartFile, User user, String itemId) throws IOException {
 
         Path uploadPath = Paths.get("User-Files/" + user.getUsername());
 
@@ -94,7 +105,11 @@ public class FileUploadUtil {
         } catch (IOException ioe) {
             throw new IOException("Could not save file: " + fileName, ioe);
         }
-        addToPersonalFilesList(multipartFile, fileCode, user);
+        if (itemId == null){
+            addToPersonalFilesList(multipartFile, fileCode, user);
+        } else {
+            ssfsdfsdfd(multipartFile, fileCode, user, itemId);
+        }
         return fileCode;
     }
 
@@ -105,7 +120,27 @@ public class FileUploadUtil {
     }
 
     private void addToPersonalFilesList(MultipartFile multipartFile, String fileCode, User user) {
+        PersonalFile personalFile = setFileAttribute(multipartFile, fileCode);
+        user.getPersonalFiles().add(personalFile.getId());
+        user.setUsedStorage(user.getUsedStorage() + multipartFile.getSize());
+        userService.save(user);
+    }
 
+    private void ssfsdfsdfd(MultipartFile multipartFile, String fileCode, User user, String itemId) {
+        System.out.println("FileUploadUtil.ssfsdfsdfd");
+        PersonalFile personalFile = setFileAttribute(multipartFile, fileCode);
+        Optional<Item> dbItem = itemService.findById(itemId);
+        if (dbItem.isPresent()){
+            Item item = dbItem.get();
+            System.out.println("item = " + item);
+            item.getAdditionalPictureIds().add(personalFile.getId());
+            System.out.println("item = " + item);
+            itemService.saveItem(item);
+        }
+
+    }
+
+    private PersonalFile setFileAttribute(MultipartFile multipartFile, String fileCode) {
         PersonalFile personalFile = new PersonalFile();
         personalFile.setId(new ObjectId().toString());
         personalFile.setFileName(multipartFile.getOriginalFilename());
@@ -114,8 +149,6 @@ public class FileUploadUtil {
         personalFile.setIdentifier(fileCode);
         personalFile.setCreatedAt(LocalDateTime.now().format(ISO_DATE_TIME));
         personalFileService.saveFile(personalFile);
-        user.getPersonalFiles().add(personalFile.getId());
-        user.setUsedStorage(user.getUsedStorage() + multipartFile.getSize());
-        userService.save(user);
+        return personalFile;
     }
 }

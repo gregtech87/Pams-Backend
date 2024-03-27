@@ -39,8 +39,18 @@ public class FileController {
         System.out.println("multipartFile = " + multipartFile);
         System.out.println("multipartFile = " + multipartFile.getOriginalFilename());
         System.out.println("username = " + username);
-        return fileUploadUtil.incomingFileHandler(multipartFile, username);
+        return fileUploadUtil.incomingFileHandler(multipartFile, username, null);
 
+    }
+
+    @PostMapping("/uploadToGallery")
+    public ResponseEntity<?> uploadToGallery(@RequestParam("file") MultipartFile multipartFile, @RequestParam("username") String username, @RequestParam("itemId") String itemId) throws IOException {
+        System.out.println("FileController.uploadFile");
+        System.out.println("multipartFile = " + multipartFile);
+        System.out.println("multipartFile = " + multipartFile.getOriginalFilename());
+        System.out.println("username = " + username);
+        System.out.println("itemId = " + itemId);
+        return fileUploadUtil.incomingFileHandler(multipartFile, username, itemId);
     }
 
     @GetMapping("/userPdf/{userId}")
@@ -56,7 +66,7 @@ public class FileController {
 
     @GetMapping("/file/{ids}")
     public List<PersonalFile> getFiles(@PathVariable List<String> ids) {
-        System.out.println("FileController.getNots");
+        System.out.println("FileController.getFiles");
         System.out.println(ids);
         return personalFileService.findFilesByIds(ids);
     }

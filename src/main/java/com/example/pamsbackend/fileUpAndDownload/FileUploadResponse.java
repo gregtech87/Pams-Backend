@@ -6,7 +6,9 @@ public class FileUploadResponse {
     private boolean fileAlreadyExists = false;
     private boolean userNamePresent = true;
     private boolean storageLimitExceed = false;
+    private boolean fileSizeExceed = false;
     private long size;
+    private long maxFileSizeMB = 50;
 
     public FileUploadResponse() {
     }
@@ -59,15 +61,33 @@ public class FileUploadResponse {
         this.storageLimitExceed = storageLimitExceed;
     }
 
+    public boolean isFileSizeExceed() {
+        return fileSizeExceed;
+    }
+
+    public void setFileSizeExceed(boolean fileSizeExceed) {
+        this.fileSizeExceed = fileSizeExceed;
+    }
+
+    public long getMaxFileSize() {
+        return maxFileSizeMB;
+    }
+
+    public void setMaxFileSize(long maxFileSize) {
+        this.maxFileSizeMB = maxFileSize;
+    }
+
     @Override
     public String toString() {
         return "FileUploadResponse{" +
                 "fileName='" + fileName + '\'' +
-                ", identifyer='" + identifier + '\'' +
+                ", identifier='" + identifier + '\'' +
                 ", fileAlreadyExists=" + fileAlreadyExists +
                 ", userNamePresent=" + userNamePresent +
                 ", storageLimitExceed=" + storageLimitExceed +
+                ", fileSizeExceed=" + fileSizeExceed +
                 ", size=" + size +
+                ", maxFileSize=" + maxFileSizeMB +
                 '}';
     }
 }

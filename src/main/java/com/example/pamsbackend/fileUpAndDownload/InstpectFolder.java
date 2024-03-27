@@ -58,6 +58,11 @@ public class InstpectFolder {
             System.err.println("Problem finding folder!");
         }
         size = size + fileSize;
+        System.out.println("maxSizePerUser = " + maxSizePerUser);
+        System.out.println("username = " + username);
+        System.out.println("fileSize = " + fileSize);
+        System.out.println("mbOfStorage = " + mbOfStorage);
+        System.out.println("size = " + size);
 
         if (maxSizePerUser < size){
             StorageLimitExceed = true;

@@ -9,8 +9,8 @@ public interface ItemService {
     List<Item> findAllItems();
     Optional<Item> findById(String id);
     List<Item> findItemsByIds(List<String> itemIds);
-    Item registerNote(Item newItem);
-    Item saveNote(Item item);
+    Item registerItem(Item newItem);
+    Item saveItem(Item item);
     Item editItem(Item item);
     void deleteItem(String id);
 }

@@ -12,6 +12,7 @@ import jakarta.annotation.PostConstruct;
 import net.sf.jasperreports.engine.*;
 import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 

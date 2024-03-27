@@ -46,7 +46,7 @@ public class ItemController {
     public Item regItem(@RequestBody Item item) {
         System.err.println("ItemController.regItem");
         System.err.println("item = " + item);
-        return itemService.registerNote(item);
+        return itemService.registerItem(item);
 
     }
 

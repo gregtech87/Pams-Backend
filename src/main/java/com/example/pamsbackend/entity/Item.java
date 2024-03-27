@@ -8,6 +8,7 @@ import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "items")
@@ -39,7 +40,7 @@ public class Item {
     private String age;
     private String accessories;
     private String createdAt;
-    private List<String> additionalPictureIds;
+    private List<String> additionalPictureIds = new ArrayList<>();
     private Address placeOfPurchase;
     private ItemStatus status;
 
