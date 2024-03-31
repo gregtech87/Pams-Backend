@@ -107,6 +107,7 @@ public class SecurityConfig {
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/downloadFile/{fileCode}/{username}")).hasRole("USER")
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/downloadFile/{fileCode}/{username}/{galleryName}")).hasRole("USER")
                         .requestMatchers(mvc.pattern(HttpMethod.DELETE, "/api/v1/file/{json}")).hasRole("USER")
+                        .requestMatchers(mvc.pattern(HttpMethod.DELETE, "/api/v1/item/{id}")).hasRole("USER")
 
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/user/{id}")).hasRole("EDITUSER")
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/userPdf/{userId}")).hasRole("EDITUSER")
@@ -129,6 +130,7 @@ public class SecurityConfig {
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/item")).hasRole("EDITITEM")
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/item/{id}")).hasRole("EDITITEM")
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/items/{ids}")).hasRole("EDITITEM")
+                        .requestMatchers(mvc.pattern(HttpMethod.PUT, "/api/v1/item")).hasRole("EDITITEM")
                         .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/item")).hasRole("EDITITEM")
 
 

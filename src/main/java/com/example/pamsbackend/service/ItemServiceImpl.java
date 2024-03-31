@@ -1,18 +1,25 @@
 package com.example.pamsbackend.service;
 
 import com.example.pamsbackend.dao.ItemService;
+import com.example.pamsbackend.dao.PersonalFileService;
 import com.example.pamsbackend.dao.UserService;
 import com.example.pamsbackend.entity.Item;
-import com.example.pamsbackend.entity.Note;
+import com.example.pamsbackend.entity.PersonalFile;
 import com.example.pamsbackend.entity.User;
 import com.example.pamsbackend.repositorys.ItemRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,12 +28,14 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
     private final UserService userService;
+    private final PersonalFileService personalFileService;
     private final MongoTemplate mongoTemplate;
 
     @Autowired
-    public ItemServiceImpl(ItemRepository itemRepository, UserService userService, MongoTemplate mongoTemplate) {
+    public ItemServiceImpl(ItemRepository itemRepository, UserService userService, @Lazy PersonalFileService personalFileService, MongoTemplate mongoTemplate) {
         this.itemRepository = itemRepository;
         this.userService = userService;
+        this.personalFileService = personalFileService;
         this.mongoTemplate = mongoTemplate;
     }
 
@@ -67,12 +76,111 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item editItem(Item item) {
-        return null;
+    public Item editItem(Item editedItem) {
+        return itemRepository.save(editedItem);
     }
 
     @Override
-    public void deleteItem(String id) {
+    public String deleteItem(String id) throws IOException {
+        boolean pictureFilesRemoved = false;
+        boolean folderRemoved = false;
+        boolean userRegistryRemoved = false;
+        Optional<Item> dbItem = findById(id);
+        if (dbItem.isPresent()) {
+            Item item = dbItem.get();
+            Optional<User> dbUser = userService.findUserById(item.getOwner());
+            if (dbUser.isPresent()) {
+                User user = dbUser.get();
+                userRegistryRemoved = removeUserRegistry(user, item.getId());
+                folderRemoved = removeFileFolder(user.getUsername(), item.getTitle());
+                pictureFilesRemoved = removeAdditionalPictures(user, item);
+            }
+        }
+        System.out.println("userRegistryRemoved = " + userRegistryRemoved);
+        System.out.println("folderRemoved = " + folderRemoved);
+        System.out.println("pictureFilesRemoved = " + pictureFilesRemoved);
+        if (pictureFilesRemoved && folderRemoved && userRegistryRemoved) {
         itemRepository.deleteById(id);
+            return "Deluttad";
+        } else {
+            return "POOOOOP";
+        }
     }
+
+    private boolean removeAdditionalPictures(User user, Item item) {
+        boolean success = false;
+        List<String> idList = item.getAdditionalPictureIds();
+        if (idList.isEmpty()) {
+            success = true;
+        } else {
+            List<PersonalFile> fileList = personalFileService.findFilesByIds(idList);
+            System.out.println("fileList = " + fileList);
+            System.out.println("userStorage = " + user.getUsedStorage());
+            try {
+                for (PersonalFile personalFile : fileList) {
+                    System.out.println("file: " + personalFile);
+                    user.setUsedStorage(user.getUsedStorage() - personalFile.getSize());
+                    personalFileService.deleteFileEntryOnly(personalFile.getId());
+                };
+                userService.save(user);
+                success = true;
+            } catch (Exception e) {
+                System.err.println("ERROR DELETE FILE ENTRY IN DATABASE! From user: " + user.getId() + ", File list from Item: " + item.getId());
+            }
+            fileList = new ArrayList<>();
+            System.out.println("userStorage = " + user.getUsedStorage());
+            System.out.println("fileList = " + fileList);
+        }
+        return success;
+    }
+
+    private boolean removeFileFolder(String userId, String itemId) throws IOException {
+        boolean success = false;
+        Path directoryPath = Paths.get("User-Files/" + userId + "/" + itemId);
+
+        System.out.println("directoryPath = " + directoryPath);
+        if (Files.exists(directoryPath)) {
+            Files.list(directoryPath).forEach(file -> {
+                Path fullPath = null;
+                try {
+                    fullPath = Path.of(directoryPath + "/" + file.getFileName());
+                    System.out.println("fullPath = " + fullPath);
+                    Files.delete(fullPath);
+                    System.out.println("exists: " + Files.exists(directoryPath));
+                } catch (IOException e) {
+                    System.err.println("******************* ERROR DELETE FILE: " + fullPath + " ******************");
+                }
+            });
+        }
+        if (Files.exists(directoryPath )){
+            try {
+                Files.deleteIfExists(directoryPath);
+                System.err.println("******************* DIRECTORY DELETED: " + directoryPath + " ******************");
+                success = true;
+            } catch (IOException e) {
+                System.err.println("******************* ERROR DELETE DIRECTORY: " + directoryPath + " ******************");
+            }
+        } else {
+            System.err.println("******************* DIRECTORY ALREADY DELETED: " + directoryPath + " ******************");
+            success = true;
+        }
+
+        return success;
+    }
+
+    private boolean removeUserRegistry(User user, String itemId) {
+        boolean success = false;
+        int listSizeBefore = user.getItems().size();
+        user.getItems().remove(itemId);
+        int listSizeAfter = user.getItems().size();
+        System.out.println("ItemListSizeBefore = " + listSizeBefore);
+        System.out.println("ItemListSizeAfter = " + listSizeAfter);
+        if (listSizeAfter < listSizeBefore) {
+            userService.save(user);
+            success = true;
+        }
+        return success;
+    }
+
+
 }

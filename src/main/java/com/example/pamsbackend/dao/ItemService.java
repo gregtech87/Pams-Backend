@@ -2,6 +2,7 @@ package com.example.pamsbackend.dao;
 
 import com.example.pamsbackend.entity.Item;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,5 +13,5 @@ public interface ItemService {
     Item registerItem(Item newItem);
     Item saveItem(Item item);
     Item editItem(Item item);
-    void deleteItem(String id);
+    String deleteItem(String id) throws IOException;
 }

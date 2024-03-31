@@ -165,4 +165,9 @@ public class PersonalFileServiceImpl implements PersonalFileService {
             return "Incorrect parameter, File found: " + fileFound + ", Correct owner: " + correctOwner;
         }
     }
+
+    @Override
+    public void deleteFileEntryOnly(String id) {
+         personalFileRepository.deleteById(id);
+    }
 }

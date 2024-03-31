@@ -13,4 +13,5 @@ public interface PersonalFileService {
     PersonalFile saveFile(PersonalFile file);
     PersonalFile editFiles(PersonalFile file);
     String deleteFile(String jsonString) throws IOException;
+    void deleteFileEntryOnly(String id);
 }

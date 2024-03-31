@@ -8,6 +8,7 @@ import com.example.pamsbackend.fileUpAndDownload.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,6 +56,21 @@ public class ItemController {
         System.err.println("item = " + item);
         return itemService.registerItem(item);
 
+    }
+
+    @PutMapping("/item")
+    public Item updateItem(@RequestBody Item item) {
+        System.out.println("ItemController.updateItem");
+        System.out.println("item = " + item);
+        return itemService.editItem(item);
+
+    }
+
+    @DeleteMapping("/item/{id}")
+    public String deleteItem(@PathVariable String id) throws IOException {
+        System.out.println("ItemController.deleteItem");
+        System.out.println("id = " + id);
+        return itemService.deleteItem(id);
     }
 
 //    @GetMapping("/downloadFile/{fileCode}/{username}")
