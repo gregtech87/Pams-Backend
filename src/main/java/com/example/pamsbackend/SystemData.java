@@ -42,27 +42,28 @@ public class SystemData {
         } else {
             System.out.println("editUser present!");
         }
+
         if(systemEntityService.findByUsername("noteGuy") == null){
             SystemEntity systemEntity = new SystemEntity("noteGuy", "noteGuy", "noteGuy", "ROLE_EDITNOTE");
             System.out.println(systemEntityService.createEntity(systemEntity));
         } else {
             System.out.println("noteGuy present!");
         }
+
         if(systemEntityService.findByUsername("fileGuy") == null){
             SystemEntity systemEntity = new SystemEntity("fileGuy", "fileGuy", "fileGuy", "ROLE_UPLOAD");
             System.out.println(systemEntityService.createEntity(systemEntity));
         } else {
             System.out.println("fileGuy present!");
         }
+
         if(systemEntityService.findByUsername("itemGuy") == null){
             SystemEntity systemEntity = new SystemEntity("itemGuy", "itemGuy", "itemGuy", "ROLE_EDITITEM");
             System.out.println(systemEntityService.createEntity(systemEntity));
         } else {
             System.out.println("itemGuy present!");
         }
-
         setEntityList();
-
     }
 
     private void setEntityList() {
@@ -72,7 +73,6 @@ public class SystemData {
         }
         System.out.println("All Entities: " + entityList);
     }
-
     public static List<String> getEntityList() {
         return entityList;
     }

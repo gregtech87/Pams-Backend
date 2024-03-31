@@ -3,7 +3,7 @@ package com.example.pamsbackend.PdfUserInfo;
 import com.example.pamsbackend.dao.UserService;
 import com.example.pamsbackend.entity.Note;
 import com.example.pamsbackend.entity.User;
-import com.example.pamsbackend.fileUpAndDownload.InstpectFolder;
+import com.example.pamsbackend.fileUpAndDownload.InspectFolder;
 import com.example.pamsbackend.service.NoteServiceImpl;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -20,30 +20,25 @@ import java.util.*;
 import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
 
 @Service
-public class PDFgenerator {
+public class PdfGenerator {
 
     private final UserService userService;
     private final NoteServiceImpl noteService;
-    private boolean fileNameExists = false;
-    private final String filename = "-UserReport.pdf";
-    private String fullFilename;
 
     @Autowired
-    public PDFgenerator(UserService userService, NoteServiceImpl noteService) {
+    public PdfGenerator(UserService userService, NoteServiceImpl noteService) {
         this.userService = userService;
         this.noteService = noteService;
     }
 
     public User generateUserPDF(User user) throws JRException, IOException {
-        System.out.println("PDFgenerator.generateUserPDF");
+        String filename = "-UserReport.pdf";
+        String outputFile;
         // Destination path
         Path userPath = Paths.get("User-Files" + "/" + user.getUsername());
-
         // Template path
         String filepath = "src/main/resources/pdfTemplateUserInfo/User_Info.jrxml";
-//        String filepath = "/WEB-INF/classes/resources/pdfTemplateUserInfo/User_Info.jrxml";
-
-        // Read jrxml file and creating jasperdesign object
+        // Read jrxml file and creating jasperDesign object
         JasperReport jasperReport = JasperCompileManager.compileReport(filepath);
 
         List<Note> listItems = new ArrayList<>();
@@ -91,24 +86,9 @@ public class PDFgenerator {
          * If file exists, make sure new file overwrite the old.
          * If not finding folder, create it.
          * */
-        fileNameExists = new InstpectFolder().inspectFileName(filename.substring(1 ), user.getUsername(), userPath);
-//        try {
-//            Files.list(userPath).forEach(file -> {
-//                if (file.getFileName().toString().endsWith(filename)) {
-//                    fileNameExists = true;
-//                    fullFilename = file.getFileName().toString();
-//                }
-//            });
-//        } catch (IOException e) {
-//            if (!Files.exists(userPath)) {
-//                System.err.println("******************* NEW DIRECTORY CREATED: " + userPath + " ******************");
-//                Files.createDirectories(userPath);
-//            }
-//            System.err.println("First time user: " + user.getUsername() + " generate a PDF!");
-//        }
+        boolean fileNameExists = new InspectFolder().inspectFileName(filename.substring(1), user.getUsername(), userPath);
 
         // Checks if file have identifier or not.
-        String outputFile = "";
         String fileCode = RandomStringUtils.randomAlphanumeric(15);
         if (!fileNameExists) {
             outputFile = userPath + "/" + fileCode + filename;
@@ -117,9 +97,6 @@ public class PDFgenerator {
         } else {
             outputFile = userPath + "/" + user.getPdfUser().getUserInfoPdfIdentifier() + filename;
             user.getPdfUser().setCreatedAt(LocalDateTime.now().format(ISO_DATE_TIME));
-
-            System.out.println(LocalDateTime.now().format(ISO_DATE_TIME));
-//            System.out.println(LocalDateTime.now().format(RFC_1123_DATE_TIME));
             userService.save(user);
         }
 

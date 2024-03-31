@@ -20,7 +20,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
     private final SystemEntitiesRepository systemEntitiesRepository;
 
-
     @Autowired
     public CustomUserDetailsService(UserRepository userRepository, SystemEntitiesRepository systemEntitiesRepository) {
         this.userRepository = userRepository;
@@ -29,11 +28,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        System.out.println(username);
-
         List<String> entityList = SystemData.getEntityList();
-
         boolean systemEntity = false;
+        // Check if request comes from the system or a user.
         User user = new User();
         for (String s: entityList){
             if (s.equals(username)) {
@@ -42,6 +39,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             }
         }
 
+        // Completes system or user check.
         if (systemEntity){
            SystemEntity entity = systemEntitiesRepository.findByUsername(username);
            user.setId(entity.getId());
@@ -51,20 +49,13 @@ public class CustomUserDetailsService implements UserDetailsService {
            user.setEnabled(true);
            user.setLocked(false);
            user.setRole(entity.getRole());
-
         } else {
             user = userRepository.findByUsername(username);
         }
 
-        System.out.println(user);
         if (user == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
-
-        // Load user roles from the database
-        System.out.println("CustomUserDetailsService line 65: " + user);
-        System.out.println("CustomUserDetailsService line 66: " + user.getRole());
-        System.out.println("incoming: " + user.getPassword());
 
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),

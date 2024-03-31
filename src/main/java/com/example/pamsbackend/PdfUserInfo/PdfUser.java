@@ -1,7 +1,5 @@
 package com.example.pamsbackend.PdfUserInfo;
 
-import java.time.LocalDateTime;
-
 public class PdfUser {
 
     private String name = "UserReport.pdf";

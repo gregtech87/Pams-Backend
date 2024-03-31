@@ -17,19 +17,21 @@ import org.springframework.stereotype.Service;
 public class FileDownloadUtil {
     private Path foundFile;
 
+
     public ResponseEntity<?> outgoingFileHandler(String fileCode, String username, String galleryName) {
         FileDownloadUtil downloadUtil = new FileDownloadUtil();
-        Resource resource = null;
+        Resource resource;
 
-        Path downloadPath = null;
-        if (galleryName == null){
+        // Set path based on user file or item gallery image
+        Path downloadPath;
+        if (galleryName == null) {
             downloadPath = Paths.get("User-Files/" + username);
         } else {
             downloadPath = Paths.get("User-Files/" + username + "/" + galleryName);
         }
 
         try {
-            resource = downloadUtil.getFileAsResource(fileCode, username, downloadPath);
+            resource = downloadUtil.getFileAsResource(fileCode, downloadPath);
         } catch (IOException e) {
             return ResponseEntity.internalServerError().build();
         }
@@ -47,20 +49,17 @@ public class FileDownloadUtil {
                 .body(resource);
     }
 
-    public Resource getFileAsResource(String fileCode, String username, Path downloadPath) throws IOException {
-//        Path dirPath = Paths.get("User-Files/" + username);
+    public Resource getFileAsResource(String fileCode, Path downloadPath) throws IOException {
 
         Files.list(downloadPath).forEach(file -> {
             if (file.getFileName().toString().startsWith(fileCode)) {
                 foundFile = file;
-//                return;
             }
         });
 
         if (foundFile != null) {
             return new UrlResource(foundFile.toUri());
         }
-
         return null;
     }
 }

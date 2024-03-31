@@ -11,7 +11,7 @@ public interface ItemService {
     Optional<Item> findById(String id);
     List<Item> findItemsByIds(List<String> itemIds);
     Item registerItem(Item newItem);
-    Item saveItem(Item item);
+    void saveItem(Item item);
     Item editItem(Item item);
     String deleteItem(String id) throws IOException;
 }

@@ -1,18 +1,11 @@
 package com.example.pamsbackend.entity;
 
-//public class Picture extends Binary {
 public class PictureData {
     private String name = "";
     private String type = "";
     private int size = 0;
     private long lastModified = 0;
     private String lastModifiedDate = "";
-//    private Binary binary;
-
-
-//    public Picture(byte[] data) {
-//        super(data);
-//    }
 
     public PictureData() {
     }
@@ -65,13 +58,6 @@ public class PictureData {
         this.lastModifiedDate = lastModifiedDate;
     }
 
-//    public Binary getBinary() {
-//        return binary;
-//    }
-//
-//    public void setBinary(Binary binary) {
-//        this.binary = binary;
-//    }
 
     @Override
     public String toString() {
@@ -81,7 +67,6 @@ public class PictureData {
                 ", size=" + size +
                 ", lastModified=" + lastModified +
                 ", lastModifiedDate='" + lastModifiedDate + '\'' +
-//                ", binary=" + binary +
                 '}';
     }
 }

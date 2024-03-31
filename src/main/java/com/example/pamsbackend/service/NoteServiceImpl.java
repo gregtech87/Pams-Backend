@@ -30,11 +30,6 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public List<Note> getAllNotes() {
-        return null;
-    }
-
-    @Override
     public Optional<Note> findById(String id) {
         return noteRepository.findById(id);
     }
@@ -47,10 +42,7 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     public Note saveNote(Note newNote) {
-
         newNote.setId(new ObjectId().toString());
-
-        System.out.println("note L42"+newNote);
         Optional<User> dbUser = userRepository.findById(newNote.getAuthor());
         if (dbUser.isPresent()) {
             User user = dbUser.get();
@@ -58,7 +50,6 @@ public class NoteServiceImpl implements NoteService {
             notes.add(newNote.getId());
             userRepository.save(user);
         }
-
         return noteRepository.save(newNote);
     }
 

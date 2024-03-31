@@ -1,4 +1,4 @@
-package com.example.pamsbackend.fileUpAndDownload;
+package com.example.pamsbackend.entity;
 
 public class FileUploadResponse {
     private String fileName;

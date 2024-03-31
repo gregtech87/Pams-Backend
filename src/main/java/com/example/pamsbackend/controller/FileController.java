@@ -31,25 +31,13 @@ public class FileController {
         this.personalFileService = personalFileService;
     }
 
-    //TODO link file with user.
-
     @PostMapping("/uploadFile")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile multipartFile, @RequestParam("username") String username) throws IOException {
-        System.out.println("FileController.uploadFile");
-        System.out.println("multipartFile = " + multipartFile);
-        System.out.println("multipartFile = " + multipartFile.getOriginalFilename());
-        System.out.println("username = " + username);
         return fileUploadUtil.incomingFileHandler(multipartFile, username, null);
-
     }
 
     @PostMapping("/uploadToGallery")
     public ResponseEntity<?> uploadToGallery(@RequestParam("file") MultipartFile multipartFile, @RequestParam("username") String username, @RequestParam("itemId") String itemId) throws IOException {
-        System.out.println("FileController.uploadFile");
-        System.out.println("multipartFile = " + multipartFile);
-        System.out.println("multipartFile = " + multipartFile.getOriginalFilename());
-        System.out.println("username = " + username);
-        System.out.println("itemId = " + itemId);
         return fileUploadUtil.incomingFileHandler(multipartFile, username, itemId);
     }
 
@@ -63,6 +51,7 @@ public class FileController {
     public ResponseEntity<?> downloadFile(@PathVariable("fileCode") String fileCode, @PathVariable("username") String username) {
         return fileDownloadUtil.outgoingFileHandler(fileCode, username, null);
     }
+
     @GetMapping("/downloadFile/{fileCode}/{username}/{galleryName}")
     public ResponseEntity<?> downloadGalleryFile(@PathVariable("fileCode") String fileCode, @PathVariable("username") String username, @PathVariable String galleryName) {
         return fileDownloadUtil.outgoingFileHandler(fileCode, username, galleryName);
@@ -70,15 +59,11 @@ public class FileController {
 
     @GetMapping("/file/{ids}")
     public List<PersonalFile> getFiles(@PathVariable List<String> ids) {
-        System.out.println("FileController.getFiles");
-        System.out.println(ids);
         return personalFileService.findFilesByIds(ids);
     }
 
     @DeleteMapping("/file/{json}")
     public String deleteFile(@PathVariable String json) throws IOException {
-        System.err.println("FileController.deleteFile");
-        System.out.println(json);
         return personalFileService.deleteFile(json);
     }
 }

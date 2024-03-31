@@ -42,11 +42,6 @@ public class PersonalFileServiceImpl implements PersonalFileService {
     }
 
     @Override
-    public List<PersonalFile> getAllFiles() {
-        return null;
-    }
-
-    @Override
     public Optional<PersonalFile> findById(String id) {
         return Optional.empty();
     }
@@ -58,8 +53,8 @@ public class PersonalFileServiceImpl implements PersonalFileService {
     }
 
     @Override
-    public PersonalFile saveFile(PersonalFile file) {
-        return personalFileRepository.save(file);
+    public void saveFile(PersonalFile file) {
+        personalFileRepository.save(file);
     }
 
     @Override
@@ -70,10 +65,11 @@ public class PersonalFileServiceImpl implements PersonalFileService {
     @Override
     public String deleteFile(String jsonString) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> jsonMap = mapper.readValue(jsonString, new TypeReference<Map<String, Object>>() {
+        Map<String, Object> jsonMap = mapper.readValue(jsonString, new TypeReference<>() {
         });
-        System.err.println("jsonMap = " + jsonMap);
-        System.err.println("jsonMap = " + jsonMap.get("userId"));
+        PersonalFile personalFile;
+        User user;
+        Path directoryPath = null;
         boolean fileFound = false;
         correctOwner = false;
         String fileId = jsonMap.get("fileId").toString();
@@ -81,6 +77,7 @@ public class PersonalFileServiceImpl implements PersonalFileService {
         String fileName = jsonMap.get("fileName").toString();
         String userId = jsonMap.get("userId").toString();
         Item item = null;
+        Optional<User> dbUser = userService.findUserById(userId);
 
         if (jsonMap.get("itemId") != null){
             Optional<Item> dbItem = itemService.findById(jsonMap.get("itemId").toString());
@@ -88,26 +85,19 @@ public class PersonalFileServiceImpl implements PersonalFileService {
                 item = dbItem.get();
             }
         }
-        System.err.println("item = " + item);
-
-
-        PersonalFile personalFile;
-        User user = new User();
-        Path directoryPath = null;
-
 
         Optional<PersonalFile> dbPersonalFile = personalFileRepository.findById(fileId);
         if (dbPersonalFile.isPresent()) {
             personalFile = dbPersonalFile.get();
             fileSize = personalFile.getSize();
-            System.out.println("dbPersonalFile = " + dbPersonalFile);
             fileFound = true;
-        } else personalFile = null;
+        } else {
+            personalFile = null;
+        }
 
-        Optional<User> dbUser = userService.findUserById(userId);
+        // Set path based on user file or item gallery image
         if (dbUser.isPresent() && fileFound && item == null) {
             user = dbUser.get();
-            System.out.println("user = " + user.getUsername());
             user.getPersonalFiles().forEach(id -> {
                 if (id.equals(personalFile.getId())) {
                     correctOwner = true;
@@ -115,7 +105,6 @@ public class PersonalFileServiceImpl implements PersonalFileService {
             });
             directoryPath = Paths.get("User-Files/" + user.getUsername());
         }
-
         if (dbUser.isPresent() && fileFound && item != null) {
             User u = dbUser.get();
             item.getAdditionalPictureIds().forEach(id -> {
@@ -126,42 +115,30 @@ public class PersonalFileServiceImpl implements PersonalFileService {
             directoryPath = Paths.get("User-Files/" + u.getUsername() + "/" + item.getTitle());
         }
 
-        System.out.println("fileFound = " + fileFound);
-        System.out.println("correctOwner = " + correctOwner);
-        System.out.println("fileSize = " + fileSize);
-
         if (dbUser.isPresent() && fileFound && correctOwner) {
             user=dbUser.get();
-            System.err.println("********** user = " + user);
-
+            // Delete the file
             Path filePath = directoryPath.resolve(fileIdentifier + "-" + fileName);
-            System.err.println("filePath = " + filePath);
             Files.deleteIfExists(filePath);
-            System.err.println("filePath2 = " + Files.notExists(filePath));
-            System.err.println("item = " + item);
+            // Edit database
             if (item == null){
                 user.getPersonalFiles().remove(fileId);
                 user.setUsedStorage(user.getUsedStorage()-fileSize);
                 userService.save(user);
             } else {
-                System.err.println("else");
                 item.getAdditionalPictureIds().remove(fileId);
-                System.err.println("user = " + user);
                 user.setUsedStorage(user.getUsedStorage()-fileSize);
-                System.err.println("user = " + user);
                 itemService.saveItem(item);
                 userService.save(user);
             }
-
             personalFileRepository.deleteById(fileId);
 
             if (Files.notExists(filePath)) {
-                return "File deleted sucessfully!";
+                return "File deleted successfully!";
             } else {
                 return "File did not get deleted for some reason, contact support.";
             }
         } else {
-            System.out.println("Incorrect parameter, File found: " + fileFound + ", Correct owner: " + correctOwner);
             return "Incorrect parameter, File found: " + fileFound + ", Correct owner: " + correctOwner;
         }
     }

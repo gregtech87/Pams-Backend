@@ -7,7 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SystemEntitiesRepository extends MongoRepository<SystemEntity, String> {
-
     SystemEntity findByUsername(String username);
-
 }

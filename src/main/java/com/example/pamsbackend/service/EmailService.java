@@ -17,7 +17,6 @@ import java.util.UUID;
 
 @Service
 public class EmailService implements EmailSender {
-//    private final EmailSender emailSender;
     private final JavaMailSender mailSender;
 
     @Autowired

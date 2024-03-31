@@ -24,7 +24,6 @@ public class SystemEntityServiceImpl implements SystemEntityService {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-
     @Override
     public List<SystemEntity> getAllEntities() {
         return systemEntitiesRepository.findAll();

@@ -1,24 +1,23 @@
 package com.example.pamsbackend.controller;
 
-import com.example.pamsbackend.PdfUserInfo.PDFgenerator;
 import com.example.pamsbackend.PdfUserInfo.PdfUser;
 import com.example.pamsbackend.SystemData;
-import com.example.pamsbackend.dao.NoteService;
 import com.example.pamsbackend.entity.Address;
 import com.example.pamsbackend.entity.PictureData;
 import com.example.pamsbackend.entity.User;
 import com.example.pamsbackend.service.UserServiceImpl;
 import jakarta.annotation.PostConstruct;
-import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.JRException;
 import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.Inet4Address;
-import java.util.*;
+import java.util.Base64;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "https://pam-gui.gregtech.duckdns.org")
@@ -27,23 +26,19 @@ public class UserController {
 
     private final UserServiceImpl userServiceimpl;
     private final SystemData systemData;
-    private final NoteService noteService;
-    private final PDFgenerator pdFgenerator;
-
 
     @Autowired
-    public UserController(UserServiceImpl userServiceimpl, SystemData systemData, NoteService noteService, PDFgenerator pdFgenerator) {
+    public UserController(UserServiceImpl userServiceimpl, SystemData systemData) {
         this.userServiceimpl = userServiceimpl;
         this.systemData = systemData;
-        this.noteService = noteService;
-        this.pdFgenerator = pdFgenerator;
     }
 
     @PostConstruct
-    public void loadSystemData() throws IOException, JRException {
+    public void loadSystemData() throws IOException {
         System.out.println(Inet4Address.getLocalHost().getHostAddress());
+        // Makes sure system users exist.
         systemData.load();
-
+        // Dummy devops guy
         User u = userServiceimpl.findByUsername("testGuy");
         if (u == null) {
             User user = new User("t@g.com", "testGuy", "testGuy", "testGuy", "ROLE_USER");
@@ -59,44 +54,23 @@ public class UserController {
             userServiceimpl.signUpUser(user);
             System.out.println(user);
             System.out.println("testGuy created !");
-//            pdFgenerator.generateUserPDF(user);
         } else {
             System.out.println("testGuy present!");
-//            pdFgenerator.generateUserPDF(u);
         }
-
-
-
-    }
-
-    @GetMapping("/hello")
-    public String sadasd() {
-        return "HEEEEEEEEEOOOOLLLLLLOOOOOOO";
     }
 
     @GetMapping("/login")
     public User currentUserName(Authentication authentication) {
-        User user = userServiceimpl.findByUsername(authentication.getName());
-        System.out.println("que: " + user);
-        System.out.println(authentication.toString());
-        System.out.println(authentication.getAuthorities());
-        return user;
+        return userServiceimpl.findByUsername(authentication.getName());
     }
 
     @GetMapping("/users")
     public List<User> getAllUsers() {
         return userServiceimpl.findAllUsers();
     }
-//
-//    @GetMapping("/token/{tokenString}")
-//    public User getTokenUser(@PathVariable String tokenString) {
-//        return userServiceimpl.getToken(tokenString);
-//    }
 
     @GetMapping("/user/{id}")
     public Optional<User> getUserById(@PathVariable String id) {
-        System.out.println(id);
-        System.out.println(userServiceimpl.findUserById(id));
         return userServiceimpl.findUserById(id);
     }
 
@@ -107,7 +81,6 @@ public class UserController {
 
     @PutMapping("/user")
     public Object UpdateUser(@RequestBody User user) {
-        System.out.println("********** USER ****controller***********" + user);
         return userServiceimpl.updateUser(user);
     }
 
@@ -118,7 +91,6 @@ public class UserController {
 
     @GetMapping("/registration/confirm")
     public String confirmUser(@RequestParam("token") String token) {
-        System.out.println("***************** CONFIRMING *****************");
         return userServiceimpl.confirmToken(token);
     }
 
@@ -131,5 +103,4 @@ public class UserController {
     public Object userPassword(@RequestBody String password) {
         return userServiceimpl.updateUserPassword(password);
     }
-
 }

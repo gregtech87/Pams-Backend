@@ -1,9 +1,10 @@
 package com.example.pamsbackend.fileUpAndDownload;
 
-import com.example.pamsbackend.PdfUserInfo.PDFgenerator;
+import com.example.pamsbackend.PdfUserInfo.PdfGenerator;
 import com.example.pamsbackend.dao.ItemService;
 import com.example.pamsbackend.dao.PersonalFileService;
 import com.example.pamsbackend.dao.UserService;
+import com.example.pamsbackend.entity.FileUploadResponse;
 import com.example.pamsbackend.entity.Item;
 import com.example.pamsbackend.entity.PersonalFile;
 import com.example.pamsbackend.entity.User;
@@ -35,10 +36,10 @@ public class FileUploadUtil {
     private final UserService userService;
     private final PersonalFileService personalFileService;
     private final ItemService itemService;
-    private final PDFgenerator pdFgenerator;
+    private final PdfGenerator pdFgenerator;
 
     @Autowired
-    public FileUploadUtil(UserService userService, PersonalFileService personalFileService, ItemService itemService, PDFgenerator pdFgenerator) {
+    public FileUploadUtil(UserService userService, PersonalFileService personalFileService, ItemService itemService, PdfGenerator pdFgenerator) {
         this.userService = userService;
         this.personalFileService = personalFileService;
         this.itemService = itemService;
@@ -53,20 +54,6 @@ public class FileUploadUtil {
         response.setSize(size);
         long maxFilesize = response.getMaxFileSize() * 1024 * 1024;
 
-
-        System.out.println("FileUploadUtil.incomingFileHandler");
-        System.out.println("size: " + multipartFile.getSize());
-        System.out.println("orgName: " + multipartFile.getOriginalFilename());
-        System.out.println("fname: " + multipartFile.getName());
-        System.out.println("content: " + multipartFile.getContentType());
-        System.out.println("resours: " + multipartFile.getResource());
-        System.out.println("mf: " + multipartFile);
-        System.out.println(username);
-        System.out.println("*" + username + "*");
-        System.out.println("itemId = " + itemId);
-        System.out.println();
-
-
         if (size > maxFilesize) {
             response.setFileSizeExceed(true);
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -75,9 +62,9 @@ public class FileUploadUtil {
             return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
         } else {
             User user = userService.findByUsername(username);
-
             Path uploadPath = null;
             Item item = null;
+            // Set path based on user file or item gallery image
             if (itemId == null) {
                 uploadPath = Paths.get("User-Files/" + user.getUsername());
             } else {
@@ -89,23 +76,21 @@ public class FileUploadUtil {
             }
 
             // Check if there is storage space left
-            response.setStorageLimitExceed(new InstpectFolder().inspectFolderSize(username, size, user.getMbOfStorage(), uploadPath));
-            System.out.println("response = " + response);
-//            Check if fileName exist.
-            boolean fileNameExists = new InstpectFolder().inspectFileName(fileName, username, uploadPath);
-            System.out.println("***************************************************************");
-            System.out.println("FileUploadUtil.incomingFileHandler");
+            response.setStorageLimitExceed(new InspectFolder().inspectFolderSize(username, size, user.getMbOfStorage(), uploadPath));
+            // Check if fileName exist.
+            boolean fileNameExists = new InspectFolder().inspectFileName(fileName, username, uploadPath);
 
+            // Save user file
             if (!fileNameExists && !response.isStorageLimitExceed() && itemId == null) {
-                System.out.println("user = " + user);
                 response.setIdentifier(saveFile(fileName, multipartFile, user, uploadPath, null));
                 return new ResponseEntity<>(response, HttpStatus.OK);
-            } else if (!fileNameExists && !response.isStorageLimitExceed() && itemId != null) {
+            } //Save item gallery image
+            else if (!fileNameExists && !response.isStorageLimitExceed() && itemId != null) {
                 assert uploadPath != null;
-                System.out.println("user = " + user);
                 response.setIdentifier(saveFile(fileName, multipartFile, user, uploadPath, item));
                 return new ResponseEntity<>(response, HttpStatus.OK);
-            } else {
+            }
+            else {
                 System.out.println("File already exists!");
                 response.setFileAlreadyExists(true);
                 return new ResponseEntity<>(response, HttpStatus.ALREADY_REPORTED);
@@ -114,20 +99,6 @@ public class FileUploadUtil {
     }
 
     private String saveFile(String fileName, MultipartFile multipartFile, User user, Path uploadPath, Item item) throws IOException {
-
-//        Path uploadPath = null;
-//        Item item = null;
-//        if (itemId == null){
-//            uploadPath = Paths.get("User-Files/" + user.getUsername());
-//        } else {
-//            Optional<Item> dbItem = itemService.findById(itemId);
-//            if (dbItem.isPresent()) {
-//                item = dbItem.get();
-//                uploadPath = Paths.get("User-Files/" + user.getUsername() + "/" +item.getTitle());
-//            }
-//
-//        }
-
         String fileCode = RandomStringUtils.randomAlphanumeric(15);
 
         try (InputStream inputStream = multipartFile.getInputStream()) {
@@ -167,7 +138,6 @@ public class FileUploadUtil {
         itemService.saveItem(item);
         user.setUsedStorage(user.getUsedStorage() + multipartFile.getSize());
         userService.save(user);
-
     }
 
     private PersonalFile setFileAttribute(MultipartFile multipartFile, String fileCode) {

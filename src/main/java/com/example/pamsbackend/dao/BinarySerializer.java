@@ -9,6 +9,7 @@ import java.io.IOException;
 
 public class BinarySerializer extends JsonSerializer<Binary> {
 
+    // Converts Binary from database storage to image Base64 value.
     @Override
     public void serialize(Binary binary, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
         if (binary != null) {

@@ -20,17 +20,6 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @EnableWebSecurity
 public class SecurityConfig {
 
-
-//    private final CustomUserDetailsService customUserDetailsService;
-//
-//    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-//
-//
-//    public SecurityConfig(CustomUserDetailsService customUserDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
-//        this.customUserDetailsService = customUserDetailsService;
-//        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-//    }
-
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
@@ -74,10 +63,6 @@ public class SecurityConfig {
                                 "Access-Control-Request-Method",
                                 "Access-Control-Request-Headers",
                                 "multipart/form-data"
-
-
-
-
                         )
                         .exposedHeaders("Authorization")
                         .allowCredentials(true).maxAge(3600)
@@ -98,9 +83,6 @@ public class SecurityConfig {
 
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/index")).permitAll()
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/hello")).permitAll()
-//                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/token/{id}")).hasRole("USER")
-
-
 
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/login")).hasRole("USER")
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/users")).hasRole("USER")
@@ -115,14 +97,9 @@ public class SecurityConfig {
 
                         .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/user")).hasRole("NEWUSER")
 
-//                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/notes")).hasRole("EDITNOTE")
-//                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/note/{id}")).hasRole("EDITNOTE")
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/note/{ids}")).hasRole("EDITNOTE")
                         .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/note")).hasRole("EDITNOTE")
 
-
-//                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/downloadFile/{fileCode}/{username}")).hasRole("USER")
-//                        .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/uploadFile")).hasRole("USER")
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/file/{ids}")).hasRole("UPLOAD")
                         .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/uploadFile")).hasRole("UPLOAD")
                         .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/uploadToGallery")).hasRole("UPLOAD")
@@ -134,8 +111,6 @@ public class SecurityConfig {
                         .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/item")).hasRole("EDITITEM")
 
 
-
-
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/userstatus/**")).hasRole("STATUSCHECK")
 
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v*/registration/confirm/**")).permitAll()
@@ -143,8 +118,6 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable);
         http.cors(Customizer.withDefaults());
         http.httpBasic(Customizer.withDefaults())
-//                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
-//                        authorizationManagerRequestMatcherRegistry.anyRequest().permitAll())
                 .sessionManagement(httpSecuritySessionManagementConfigurer ->
                         httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();

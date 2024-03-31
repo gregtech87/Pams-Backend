@@ -2,7 +2,6 @@
 package com.example.pamsbackend.service;
 
 import com.example.pamsbackend.PdfUserInfo.PdfUser;
-import com.example.pamsbackend.dao.EmailSender;
 import com.example.pamsbackend.dao.UserService;
 import com.example.pamsbackend.entity.User;
 import com.example.pamsbackend.repositorys.UserRepository;
@@ -19,21 +18,13 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService {
 
-    /*Find by ObjectID
-    @Autowired
-    private MongoTemplate mongoTemplate;
-
-    public YourDocument findByObjectIdFromDatabase(ObjectId objectId) {
-        return mongoTemplate.findById(objectId, YourDocument.class);
-    }*/
-
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final EmailService emailService;
 
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, EmailService emailService, EmailSender emailSender) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, EmailService emailService) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.emailService = emailService;
@@ -52,49 +43,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public String signUpUser(User newUser) {
         newUser.setId(new ObjectId().toString());
-        System.out.println("****** NEW USER***: " + newUser);
-
-//        boolean verifiedUsername = true;
-//        boolean verifiedEmail = true;
-//        User userFromDbByUsername = userRepository.findByUsername(newUser.getUsername());
-//        User userFromDbByEmail = userRepository.findByEmail(newUser.getEmail());
-//
-//        if (userFromDbByUsername != null && newUser.getUsername().equals(userFromDbByUsername.getUsername())) {
-//                verifiedUsername = false;
-//        }
-//        if (userFromDbByEmail != null && newUser.getEmail().equals(userFromDbByEmail.getEmail())) {
-//                verifiedEmail = false;
-//        }
-//
-//        if (verifiedUsername && verifiedEmail) {
-//            newUser.setRole("ROLE_USER");
-//            String encodedPassword = bCryptPasswordEncoder.encode(newUser.getPassword());
-//            newUser.setPassword(encodedPassword);
-//            newUser = emailService.generateToken(newUser);
-//
-//            System.out.println("****** NEW USER2 ***: " + newUser);
-//            userRepository.save(newUser);
-//            return "{\"answer\":\"User registered successfully!\", \"verified\":true, " +
-//                    "\"verifiedUsername\":true, \"verifiedEmail\":true}";
-//        } else {
-//            return "{\"answer\":\"User not registered!\", \"verified\":false, " +
-//                    "\"verifiedUsername\":" + verifiedUsername + ", \"verifiedEmail\":" + verifiedEmail + "}";
-//        }
         return checkUsernameAndEmailInDatabase(newUser, false);
     }
 
     private String checkUsernameAndEmailInDatabase(User user, boolean editedUser) {
         boolean verifiedUsername = true;
         boolean verifiedEmail = true;
-//        User userFromDbByUsername = userRepository.findByUsername(user.getUsername());
-//        User userFromDbByEmail = userRepository.findByEmail(user.getEmail());
-//
-//        if (userFromDbByUsername != null && !editedUser && user.getUsername().equals(userFromDbByUsername.getUsername())) {
-//            verifiedUsername = false;
-//        }
-//        if (userFromDbByEmail != null && !editedUser && user.getEmail().equals(userFromDbByEmail.getEmail())) {
-//            verifiedEmail = false;
-//        }
 
         List<User> userList = userRepository.findAll();
         try {
@@ -106,11 +60,12 @@ public class UserServiceImpl implements UserService {
                     verifiedEmail = false;
                 }
             }
-        } catch (NullPointerException n){
+        } catch (NullPointerException n) {
             System.out.println("No users registered");
         }
 
         if (verifiedUsername && verifiedEmail) {
+
             if (!editedUser) {
                 user.setRole("ROLE_USER");
                 String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
@@ -119,7 +74,6 @@ public class UserServiceImpl implements UserService {
                 user = emailService.generateToken(user);
             }
 
-            System.out.println("****** NEW USER2 ***: " + user);
             userRepository.save(user);
             return "{\"answer\":\"User registered successfully!\", \"verified\":true, " +
                     "\"verifiedUsername\":true, \"verifiedEmail\":true, \"found\":true}";
@@ -135,21 +89,8 @@ public class UserServiceImpl implements UserService {
         Optional<User> dbUser = userRepository.findById(editedUser.getId());
         if (dbUser.isPresent()) {
             User user = dbUser.get();
-            System.out.println("DB User: " + user);
             editedUser.setPassword(user.getPassword());
             user = editedUser;
-            System.out.println("DB User: " + user);
-//            user.setFirstName(editedUser.getFirstName());
-//            user.setLastName(editedUser.getLastName());
-//            user.setUsername(editedUser.getUsername());
-//            user.setEmail(editedUser.getEmail());
-//            user.setPhone(editedUser.getPhone());
-//            user.setDateOfBirth(editedUser.getDateOfBirth());
-//            user.setAddress(new Address(
-//                    editedUser.getAddress().getStreet(),
-//                    editedUser.getAddress().getPostalCode(),
-//                    editedUser.getAddress().getCity()
-//                    ));
             return checkUsernameAndEmailInDatabase(user, true);
         } else {
             return "{\"answer\":\"User does not exist in database!\", \"verified\":false, " +
@@ -173,7 +114,6 @@ public class UserServiceImpl implements UserService {
     public String confirmToken(String token) {
         User user = userRepository.findByConfirmationTokenToken(token);
         ConfirmationToken confirmationToken = user.getConfirmationToken();
-        System.out.println("confirmationToken confirmation before: " + confirmationToken);
         if (confirmationToken.getConfirmedAt() != null) {
             return "Account already confirmed!";
         }
@@ -183,8 +123,7 @@ public class UserServiceImpl implements UserService {
         if (!expiredAt.isBefore(LocalDateTime.now())) {
             user.getConfirmationToken().setConfirmedAt(LocalDateTime.now());
             user.setEnabled(true);
-            System.out.println("confirmationToken confirmation after: " + user.getConfirmationToken());
-            System.out.println(userRepository.save(user));
+            userRepository.save(user);
             return "Account confirmed!";
         } else {
             return "Token expired!";
@@ -194,12 +133,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public String getUserStatus(String credentials) {
         int colonIndex = credentials.indexOf(":");
-        System.out.println(colonIndex);
         String username = credentials.substring(0, colonIndex);
         String password = credentials.substring(colonIndex + 1);
-        System.out.println(username);
-        System.out.println(password);
-
         User user = findByUsername(username);
 
         if (user != null) {
@@ -208,23 +143,18 @@ public class UserServiceImpl implements UserService {
         } else {
             return "{\"userFound\":false, \"verifiedPassword\":false, \"accountEnabled\":false,\"accountLocked\":false}";
         }
-
     }
 
     @Override
     public boolean updateUserPassword(String idOldNewPassword) {
+        // idOldNewPassword looks like this: "id:oldPassword:newPassword"
         int colonIndex1 = idOldNewPassword.indexOf(":");
         String userId = idOldNewPassword.substring(1, colonIndex1);
         String onlyPasswords = idOldNewPassword.substring(colonIndex1 + 1, idOldNewPassword.length() - 1);
 
         int colonIndex2 = onlyPasswords.indexOf(":");
         String oldPassword = onlyPasswords.substring(0, colonIndex2);
-        String newpassword = onlyPasswords.substring(colonIndex2 + 1);
-
-        System.out.println(idOldNewPassword);
-        System.out.println(userId);
-        System.out.println(oldPassword);
-        System.out.println(newpassword);
+        String newPassword = onlyPasswords.substring(colonIndex2 + 1);
 
         boolean success = false;
 
@@ -232,8 +162,8 @@ public class UserServiceImpl implements UserService {
         if (dbUser.isPresent()) {
             User user = dbUser.get();
             success = bCryptPasswordEncoder.matches(oldPassword, user.getPassword());
-            if (success){
-                user.setPassword(bCryptPasswordEncoder.encode(newpassword));
+            if (success) {
+                user.setPassword(bCryptPasswordEncoder.encode(newPassword));
                 userRepository.save(user);
             }
         }
@@ -241,7 +171,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void save(User user){
+    public void save(User user) {
         userRepository.save(user);
     }
 }

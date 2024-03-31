@@ -1,13 +1,11 @@
 package com.example.pamsbackend.controller;
 
 import com.example.pamsbackend.entity.Note;
-import com.example.pamsbackend.entity.User;
 import com.example.pamsbackend.service.NoteServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "https://pam-gui.gregtech.duckdns.org")
@@ -21,23 +19,8 @@ public class NoteController {
         this.noteServiceImpl = noteServiceImpl;
     }
 
-    //TODO remove
-    @GetMapping("/notes")
-    public List<Note> getAll() {
-        return noteServiceImpl.getAllNotes();
-    }
-
-//    @GetMapping("/note/{id}")
-//    public Optional<Note> getNoteById(@PathVariable String id) {
-//        System.out.println(id);
-//        System.out.println(noteServiceImpl.findById(id));
-//        return noteServiceImpl.findById(id);
-//    }
-
     @GetMapping("/note/{ids}")
     public List<Note> getNots(@PathVariable List<String> ids) {
-        System.out.println("NoteController.getNots");
-        System.out.println(ids);
         return noteServiceImpl.findNotesByIds(ids);
     }
 
@@ -55,6 +38,4 @@ public class NoteController {
     public void deleteNote(@PathVariable String id) {
         noteServiceImpl.deleteNote(id);
     }
-
-
 }

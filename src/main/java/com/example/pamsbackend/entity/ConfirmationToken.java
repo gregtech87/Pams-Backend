@@ -2,13 +2,12 @@ package com.example.pamsbackend.entity;
 
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 public class ConfirmationToken {
 
-    private String token;
-    private LocalDateTime createdAt;
-    private LocalDateTime expiresAt;
+    private final String token;
+    private final LocalDateTime createdAt;
+    private final LocalDateTime expiresAt;
     private LocalDateTime confirmedAt;
 
     public ConfirmationToken(String token, LocalDateTime createdAt, LocalDateTime expiresAt) {
@@ -17,28 +16,12 @@ public class ConfirmationToken {
         this.expiresAt = expiresAt;
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public LocalDateTime getExpiresAt() {
         return expiresAt;
-    }
-
-    public void setExpiresAt(LocalDateTime expiresAt) {
-        this.expiresAt = expiresAt;
     }
 
     public LocalDateTime getConfirmedAt() {
