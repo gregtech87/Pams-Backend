@@ -1,3 +1,8 @@
+/*******************************************************************************
+ * Copyright (c) 2024. Tobias Gregorsson.
+ * Github: Gregtech87
+ ******************************************************************************/
+
 package com.example.pamsbackend.fileUpAndDownload;
 
 import java.io.IOException;
