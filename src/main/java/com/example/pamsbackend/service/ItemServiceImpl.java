@@ -82,6 +82,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item editItem(Item editedItem) {
+        System.out.println("ItemServiceImpl.editItem");
+        System.out.println("editedItem = " + editedItem);
         return itemRepository.save(editedItem);
     }
 
@@ -103,10 +105,9 @@ public class ItemServiceImpl implements ItemService {
         }
         if (itemPictureFilesRemoved && itemFolderRemoved && userItemRemoved) {
         itemRepository.deleteById(id);
-        // TODO Delete response not customized
-            return "Deluttad";
+            return "true";
         } else {
-            return "POOOOOP";
+            return "false";
         }
     }
 
@@ -156,7 +157,7 @@ public class ItemServiceImpl implements ItemService {
                 System.err.println("******************* ERROR DELETE DIRECTORY: " + directoryPath + " ******************");
             }
         } else {
-            System.err.println("******************* DIRECTORY ALREADY DELETED: " + directoryPath + " ******************");
+            System.err.println("******************* DIRECTORY ALREADY DELETED OR NEVER CREATED: " + directoryPath + " ******************");
             success = true;
         }
         return success;
