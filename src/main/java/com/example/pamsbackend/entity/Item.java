@@ -47,6 +47,7 @@ public class Item {
     private String createdAt;
     private List<String> additionalPictureIds = new ArrayList<>();
     private Address placeOfPurchase;
+    private String placeOfPurchaseName;
     private ItemStatus status;
 
     public Item() {
@@ -260,12 +261,20 @@ public class Item {
         this.status = status;
     }
 
+    public String getPlaceOfPurchaseName() {
+        return placeOfPurchaseName;
+    }
+
+    public void setPlaceOfPurchaseName(String placeOfPurchaseName) {
+        this.placeOfPurchaseName = placeOfPurchaseName;
+    }
+
     @Override
     public String toString() {
         return "Item{" +
                 "id='" + id + '\'' +
-                ", picture=" + profilePic +
-                ", pictureData=" + profilePictureData +
+                ", profilePic=" + profilePic +
+                ", profilePictureData=" + profilePictureData +
                 ", owner='" + owner + '\'' +
                 ", title='" + title + '\'' +
                 ", brand='" + brand + '\'' +
@@ -283,11 +292,12 @@ public class Item {
                 ", description='" + description + '\'' +
                 ", state='" + state + '\'' +
                 ", insurance='" + insurance + '\'' +
-                ", age=" + age +
+                ", age='" + age + '\'' +
                 ", accessories='" + accessories + '\'' +
-                ", createdAt=" + createdAt +
+                ", createdAt='" + createdAt + '\'' +
                 ", additionalPictureIds=" + additionalPictureIds +
                 ", placeOfPurchase=" + placeOfPurchase +
+                ", placeOfPurchaseName='" + placeOfPurchaseName + '\'' +
                 ", status=" + status +
                 '}';
     }

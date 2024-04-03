@@ -10,6 +10,9 @@ public class ItemStatus {
     private Address currentLocation;
     private String nameOfHolder;
     private String purpose;
+    private boolean customLocation = false;
+    private float customLat;
+    private float customLong;
 
     public ItemStatus() {
     }
@@ -43,12 +46,39 @@ public class ItemStatus {
         this.purpose = purpose;
     }
 
+    public boolean isCustomLocation() {
+        return customLocation;
+    }
+
+    public void setCustomLocation(boolean customLocation) {
+        this.customLocation = customLocation;
+    }
+
+    public float getCustomLat() {
+        return customLat;
+    }
+
+    public void setCustomLat(float customLat) {
+        this.customLat = customLat;
+    }
+
+    public float getCustomLong() {
+        return customLong;
+    }
+
+    public void setCustomLong(float customLong) {
+        this.customLong = customLong;
+    }
+
     @Override
     public String toString() {
         return "ItemStatus{" +
-                ", currentLocation=" + currentLocation +
+                "currentLocation=" + currentLocation +
                 ", nameOfHolder='" + nameOfHolder + '\'' +
                 ", purpose='" + purpose + '\'' +
+                ", customLocation=" + customLocation +
+                ", customLat=" + customLat +
+                ", customLong=" + customLong +
                 '}';
     }
 }

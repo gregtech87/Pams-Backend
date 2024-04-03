@@ -5,7 +5,7 @@
 
 package com.example.pamsbackend.fileUpAndDownload;
 
-import com.example.pamsbackend.PdfUserInfo.PDFgenerator;
+import com.example.pamsbackend.PdfUserInfo.PdfGenerator;
 import com.example.pamsbackend.dao.ItemService;
 import com.example.pamsbackend.dao.PersonalFileService;
 import com.example.pamsbackend.dao.UserService;
@@ -41,10 +41,10 @@ public class FileUploadUtil {
     private final UserService userService;
     private final PersonalFileService personalFileService;
     private final ItemService itemService;
-    private final PDFgenerator pdFgenerator;
+    private final PdfGenerator pdFgenerator;
 
     @Autowired
-    public FileUploadUtil(UserService userService, PersonalFileService personalFileService, ItemService itemService, PDFgenerator pdFgenerator) {
+    public FileUploadUtil(UserService userService, PersonalFileService personalFileService, ItemService itemService, PdfGenerator pdFgenerator) {
         this.userService = userService;
         this.personalFileService = personalFileService;
         this.itemService = itemService;
