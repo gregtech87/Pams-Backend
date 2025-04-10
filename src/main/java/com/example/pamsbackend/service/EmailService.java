@@ -12,6 +12,7 @@ import com.example.pamsbackend.entity.User;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -24,6 +25,10 @@ import java.util.UUID;
 public class EmailService implements EmailSender {
     private final JavaMailSender mailSender;
 
+    @Value("${pams.confirmationLink}")
+    private String registrationConfirmLink;
+    @Value("${pams.fromAddress}")
+    private String fromAddress;
     @Autowired
     public EmailService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
@@ -37,9 +42,7 @@ public class EmailService implements EmailSender {
         System.out.println("confirmationToken: " + confirmationToken);
         user.setConfirmationToken(confirmationToken);
 
-        String link = "https://pam-api.gregtech.duckdns.org/api/v1/registration/confirm?token=" + token;
-//        String link = "http://localhost:8586/api/v1/registration/confirm?token=" + token;
-//        String link = "http://localhost:8585/api/v1/registration/confirm?token=" + token;
+        String link = registrationConfirmLink + token;
         send( user.getEmail(), buildEmail(user.getFirstName(), link));
         return user;
     }
@@ -54,7 +57,7 @@ public class EmailService implements EmailSender {
             helper.setText(email, true);
             helper.setTo(to);
             helper.setSubject("Confirm your email");
-            helper.setFrom("pamsystems9@gmail.com");
+            helper.setFrom(fromAddress);
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {
 //            LOGGER.error("failed to send email", e);

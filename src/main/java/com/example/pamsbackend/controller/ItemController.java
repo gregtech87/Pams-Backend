@@ -15,8 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "https://pam-gui.gregtech.duckdns.org")
-@RequestMapping("/api/v1")
+@CrossOrigin(origins = "https://pam-gui.gregtech.org")
 public class ItemController {
 
     private final ItemService itemService;
@@ -26,32 +25,32 @@ public class ItemController {
         this.itemService = itemService;
     }
 
-    @GetMapping("/item")
+    @GetMapping("/v1/item")
     public List<Item> getAll() {
         return itemService.findAllItems();
     }
 
-    @GetMapping("/item/{id}")
+    @GetMapping("/v1/item/{id}")
     public Optional<Item> getItem(@PathVariable String id) {
         return itemService.findById(id);
     }
 
-    @GetMapping("/items/{ids}")
+    @GetMapping("/v1/items/{ids}")
     public List<Item> getItems(@PathVariable List<String> ids) {
         return itemService.findItemsByIds(ids);
     }
 
-    @PostMapping("/item")
+    @PostMapping("/v1/item")
     public Item regItem(@RequestBody Item item) {
         return itemService.registerItem(item);
     }
 
-    @PutMapping("/item")
+    @PutMapping("/v1/item")
     public Item updateItem(@RequestBody Item item) {
         return itemService.editItem(item);
     }
 
-    @DeleteMapping("/item/{id}")
+    @DeleteMapping("/v1/item/{id}")
     public String deleteItem(@PathVariable String id) throws IOException {
         return itemService.deleteItem(id);
     }

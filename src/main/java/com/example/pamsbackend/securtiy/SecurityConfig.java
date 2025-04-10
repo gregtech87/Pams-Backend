@@ -37,13 +37,13 @@ public class SecurityConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins(
-                                "https://pam-gui.gregtech.duckdns.org",
+                                "https://pam-gui.gregtech.org",
                                 "http://localhost:5500",
                                 "http://127.0.0.1:5500",
                                 "http://192.168.77.230:443")
                         .allowedOriginPatterns(
-                                "https://pam-gui.gregtech.duckdns.org/",
-                                "https://pam-gui.gregtech.duckdns.org",
+                                "https://pam-gui.gregtech.org/",
+                                "https://pam-gui.gregtech.org",
                                 "http://192.168.77.230:443",
 
                                 // DEV
@@ -89,36 +89,36 @@ public class SecurityConfig {
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/index")).permitAll()
                         .requestMatchers(mvc.pattern(HttpMethod.GET, "/hello")).permitAll()
 
-                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/login")).hasRole("USER")
-                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/users")).hasRole("USER")
-                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/downloadFile/{fileCode}/{username}")).hasRole("USER")
-                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/downloadFile/{fileCode}/{username}/{galleryName}")).hasRole("USER")
-                        .requestMatchers(mvc.pattern(HttpMethod.DELETE, "/api/v1/file/{json}")).hasRole("USER")
-                        .requestMatchers(mvc.pattern(HttpMethod.DELETE, "/api/v1/item/{id}")).hasRole("USER")
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/v1/login")).hasRole("USER")
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/v1/users")).hasRole("USER")
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/v1/downloadFile/{fileCode}/{username}")).hasRole("USER")
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/v1/downloadFile/{fileCode}/{username}/{galleryName}")).hasRole("USER")
+                        .requestMatchers(mvc.pattern(HttpMethod.DELETE, "/v1/file/{json}")).hasRole("USER")
+                        .requestMatchers(mvc.pattern(HttpMethod.DELETE, "/v1/item/{id}")).hasRole("USER")
 
-                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/user/{id}")).hasRole("EDITUSER")
-                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/userPdf/{userId}")).hasRole("EDITUSER")
-                        .requestMatchers(mvc.pattern(HttpMethod.PUT, "/api/v1/user")).hasRole("EDITUSER")
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/v1/user/{id}")).hasRole("EDITUSER")
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/v1/userPdf/{userId}")).hasRole("EDITUSER")
+                        .requestMatchers(mvc.pattern(HttpMethod.PUT, "/v1/user")).hasRole("EDITUSER")
 
-                        .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/user")).hasRole("NEWUSER")
+                        .requestMatchers(mvc.pattern(HttpMethod.POST, "/v1/user")).hasRole("NEWUSER")
 
-                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/note/{ids}")).hasRole("EDITNOTE")
-                        .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/note")).hasRole("EDITNOTE")
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/v1/note/{ids}")).hasRole("EDITNOTE")
+                        .requestMatchers(mvc.pattern(HttpMethod.POST, "/v1/note")).hasRole("EDITNOTE")
 
-                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/file/{ids}")).hasRole("UPLOAD")
-                        .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/uploadFile")).hasRole("UPLOAD")
-                        .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/uploadToGallery")).hasRole("UPLOAD")
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/v1/file/{ids}")).hasRole("UPLOAD")
+                        .requestMatchers(mvc.pattern(HttpMethod.POST, "/v1/uploadFile")).hasRole("UPLOAD")
+                        .requestMatchers(mvc.pattern(HttpMethod.POST, "/v1/uploadToGallery")).hasRole("UPLOAD")
 
-                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/item")).hasRole("EDITITEM")
-                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/item/{id}")).hasRole("EDITITEM")
-                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/items/{ids}")).hasRole("EDITITEM")
-                        .requestMatchers(mvc.pattern(HttpMethod.PUT, "/api/v1/item")).hasRole("EDITITEM")
-                        .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/v1/item")).hasRole("EDITITEM")
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/v1/item")).hasRole("EDITITEM")
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/v1/item/{id}")).hasRole("EDITITEM")
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/v1/items/{ids}")).hasRole("EDITITEM")
+                        .requestMatchers(mvc.pattern(HttpMethod.PUT, "/v1/item")).hasRole("EDITITEM")
+                        .requestMatchers(mvc.pattern(HttpMethod.POST, "/v1/item")).hasRole("EDITITEM")
 
 
-                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/userstatus/**")).hasRole("STATUSCHECK")
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/v1/userstatus/**")).hasRole("STATUSCHECK")
 
-                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v*/registration/confirm/**")).permitAll()
+                        .requestMatchers(mvc.pattern(HttpMethod.GET, "/v*/registration/confirm/**")).permitAll()
         );
         http.csrf(AbstractHttpConfigurer::disable);
         http.cors(Customizer.withDefaults());

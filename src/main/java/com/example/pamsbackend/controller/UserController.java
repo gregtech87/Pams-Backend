@@ -25,8 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "https://pam-gui.gregtech.duckdns.org")
-@RequestMapping("/api/v1")
+@CrossOrigin(origins = "https://pam-gui.gregtech.org")
 public class UserController {
 
     private final UserServiceImpl userServiceimpl;
@@ -64,47 +63,47 @@ public class UserController {
         }
     }
 
-    @GetMapping("/login")
+    @GetMapping("/v1/login")
     public User currentUserName(Authentication authentication) {
         return userServiceimpl.findByUsername(authentication.getName());
     }
 
-    @GetMapping("/users")
+    @GetMapping("/v1/users")
     public List<User> getAllUsers() {
         return userServiceimpl.findAllUsers();
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("/v1/user/{id}")
     public Optional<User> getUserById(@PathVariable String id) {
         return userServiceimpl.findUserById(id);
     }
 
-    @PostMapping("/user")
+    @PostMapping("/v1/user")
     public Object NewUser(@RequestBody User user) {
         return userServiceimpl.signUpUser(user);
     }
 
-    @PutMapping("/user")
+    @PutMapping("/v1/user")
     public Object UpdateUser(@RequestBody User user) {
         return userServiceimpl.updateUser(user);
     }
 
-    @DeleteMapping("/user/{id}")
+    @DeleteMapping("/v1/user/{id}")
     public void deleteUser(@PathVariable String id) {
         userServiceimpl.deleteUser(id);
     }
 
-    @GetMapping("/registration/confirm")
+    @GetMapping("/v1/registration/confirm")
     public String confirmUser(@RequestParam("token") String token) {
         return userServiceimpl.confirmToken(token);
     }
 
-    @GetMapping("/userstatus")
+    @GetMapping("/v1/userstatus")
     public String getStatus(@RequestParam("credentials") String credentials) {
         return userServiceimpl.getUserStatus(credentials);
     }
 
-    @PostMapping("/userPassword")
+    @PostMapping("/v1/userPassword")
     public Object userPassword(@RequestBody String password) {
         return userServiceimpl.updateUserPassword(password);
     }

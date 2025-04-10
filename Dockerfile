@@ -3,7 +3,6 @@ FROM tomcat:latest
 MAINTAINER gregtech87
 
 #   Prepare deployment
-# Edit email link Emailservice line 36, 37
 # Set correct mail and database in application.properties
 # Build
 # Maven Clean and package

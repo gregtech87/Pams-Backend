@@ -21,8 +21,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "https://pam-gui.gregtech.duckdns.org")
-@RequestMapping("/api/v1")
+@CrossOrigin(origins = "https://pam-gui.gregtech.org")
 public class FileController {
 
     private final FileUploadUtil fileUploadUtil;
@@ -36,38 +35,38 @@ public class FileController {
         this.personalFileService = personalFileService;
     }
 
-    @PostMapping("/uploadFile")
+    @PostMapping("/v1/uploadFile")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile multipartFile, @RequestParam("username") String username) throws IOException {
         return fileUploadUtil.incomingFileHandler(multipartFile, username, null);
     }
 
-    @PostMapping("/uploadToGallery")
+    @PostMapping("/v1/uploadToGallery")
     public ResponseEntity<?> uploadToGallery(@RequestParam("file") MultipartFile multipartFile, @RequestParam("username") String username, @RequestParam("itemId") String itemId) throws IOException {
         return fileUploadUtil.incomingFileHandler(multipartFile, username, itemId);
     }
 
-    @GetMapping("/userPdf/{userId}")
+    @GetMapping("/v1/userPdf/{userId}")
     public PdfUser generateUserPdf(@PathVariable("userId") String userId) throws JRException, IOException {
         User user = fileUploadUtil.makeUserPdf(userId);
         return user.getPdfUser();
     }
 
-    @GetMapping("/downloadFile/{fileCode}/{username}")
+    @GetMapping("/v1/downloadFile/{fileCode}/{username}")
     public ResponseEntity<?> downloadFile(@PathVariable("fileCode") String fileCode, @PathVariable("username") String username) {
         return fileDownloadUtil.outgoingFileHandler(fileCode, username, null);
     }
 
-    @GetMapping("/downloadFile/{fileCode}/{username}/{galleryName}")
+    @GetMapping("/v1/downloadFile/{fileCode}/{username}/{galleryName}")
     public ResponseEntity<?> downloadGalleryFile(@PathVariable("fileCode") String fileCode, @PathVariable("username") String username, @PathVariable String galleryName) {
         return fileDownloadUtil.outgoingFileHandler(fileCode, username, galleryName);
     }
 
-    @GetMapping("/file/{ids}")
+    @GetMapping("/v1/file/{ids}")
     public List<PersonalFile> getFiles(@PathVariable List<String> ids) {
         return personalFileService.findFilesByIds(ids);
     }
 
-    @DeleteMapping("/file/{json}")
+    @DeleteMapping("/v1/file/{json}")
     public String deleteFile(@PathVariable String json) throws IOException {
         return personalFileService.deleteFile(json);
     }
