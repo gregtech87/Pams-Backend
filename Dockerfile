@@ -8,7 +8,7 @@ MAINTAINER gregtech87
 # Maven Clean and package
 # Copy from target to project directory
 #
-COPY /Pams-Backend.war /usr/local/tomcat/webapps/ROOT.war
+COPY target/Pams-Backend.war /usr/local/tomcat/webapps/ROOT.war
 COPY /src/main/resources/pdfTemplateUserInfo /usr/local/tomcat/src/main/resources/pdfTemplateUserInfo
 COPY /src/main/resources/static/index.html /usr/local/tomcat/webapps
 COPY /src/main/resources/static/dribbble_1.gif /usr/local/tomcat/webapps
