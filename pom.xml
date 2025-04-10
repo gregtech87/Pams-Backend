@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>Pams-Backend</artifactId>
+    <artifactId>pamsBackend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Pams-Backend</name>
     <description>Pams-Backend</description>

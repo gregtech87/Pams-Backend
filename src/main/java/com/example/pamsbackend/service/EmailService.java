@@ -25,10 +25,6 @@ import java.util.UUID;
 public class EmailService implements EmailSender {
     private final JavaMailSender mailSender;
 
-    @Value("${pams.confirmationLink}")
-    private String registrationConfirmLink;
-    @Value("${pams.fromAddress}")
-    private String fromAddress;
     @Autowired
     public EmailService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
@@ -42,7 +38,7 @@ public class EmailService implements EmailSender {
         System.out.println("confirmationToken: " + confirmationToken);
         user.setConfirmationToken(confirmationToken);
 
-        String link = registrationConfirmLink + token;
+        String link = "https://pam-api.gregtech.org/api/v1/registration/confirm?token=" + token;
         send( user.getEmail(), buildEmail(user.getFirstName(), link));
         return user;
     }
@@ -57,7 +53,7 @@ public class EmailService implements EmailSender {
             helper.setText(email, true);
             helper.setTo(to);
             helper.setSubject("Confirm your email");
-            helper.setFrom(fromAddress);
+            helper.setFrom("pamsystems9@gmail.com");
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {
 //            LOGGER.error("failed to send email", e);
